@@ -1,0 +1,6 @@
+{
+  "name": "Parth News - सच के साथ, एक कदम आगे",
+  "description": "Parth News is a premier Indian digital news platform featuring breaking news, Uttar Pradesh and Prayagraj regional coverage, video reports, digital reporter onboarding, and official QR-verified reporter ID cards.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

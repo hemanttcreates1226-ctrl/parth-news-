@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', 'Mukta', system-ui, -apple-system, sans-serif;
+  }
+  
+  .font-hindi {
+    font-family: 'Mukta', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  .font-news-serif {
+    font-family: 'Rozha One', 'Martel', serif;
+  }
+
+  .font-news-martel {
+    font-family: 'Martel', 'Mukta', serif;
+  }
+
+  .font-news-broadcast {
+    font-family: 'Teko', 'Mukta', sans-serif;
+  }
+
+  .font-brand-en {
+    font-family: 'Outfit', 'Cinzel', 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+
+.animate-pulse-red {
+  animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-id-card, .printable-id-card * {
+    visibility: visible;
+  }
+  .printable-id-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
