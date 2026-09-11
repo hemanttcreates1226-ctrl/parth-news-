@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-import { BreakingTicker } from './components/layout/BreakingTicker';
 import { SearchModal } from './components/common/SearchModal';
 
 // Public Pages
@@ -244,9 +243,6 @@ function MainApp() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-gray-900 flex flex-col justify-between selection:bg-[#C8102E] selection:text-white">
       <div>
-        {/* Top Live Breaking Ticker */}
-        <BreakingTicker onNavigate={navigate} />
-
         {/* Global Main Header */}
         <Header
           currentPath={pathname}

@@ -57,7 +57,7 @@ export const ParthNewsLogo: React.FC<LogoProps> = ({
           <img
             src={logoPng || '/parthnews.png'}
             alt="पार्थ न्यूज़ - सच के साथ, एक कदम आगे"
-            className={`${imageSizeClasses} object-contain drop-shadow-md transition-transform duration-200 hover:scale-105`}
+            className={`${imageSizeClasses} object-contain transition-transform duration-200 hover:scale-105`}
             referrerPolicy="no-referrer"
             loading="eager"
             onError={() => {
@@ -68,7 +68,7 @@ export const ParthNewsLogo: React.FC<LogoProps> = ({
         ) : (
           /* High-Fidelity SVG Fallback if image blocked */
           <div className="flex items-center justify-center rounded-2xl bg-gradient-to-br from-[#E50914] via-[#C8102E] to-[#990000] p-4 text-white shadow-lg border border-red-700">
-            <span className="font-['Rozha_One',serif] font-bold text-3xl tracking-wider drop-shadow-md">पार्थ</span>
+            <span className="font-['Rozha_One',serif] font-bold text-3xl tracking-wider">पार्थ</span>
           </div>
         )}
       </div>
@@ -76,17 +76,17 @@ export const ParthNewsLogo: React.FC<LogoProps> = ({
       {/* Prominent Channel Name & Tagline Text in Header */}
       {!isImageOnly && (
         <div className="flex flex-col justify-center leading-tight">
-          {/* Main Hindi & English Title with new font style */}
+          {/* Main Hindi & English Title with unique classic bold typography */}
           <div className="flex items-center gap-2.5 flex-wrap">
             <span 
-              className={`font-['Rozha_One','Martel',serif] tracking-normal drop-shadow-xs ${
+              className={`font-['Yatra_One','Eczar','Rozha_One',serif] font-bold tracking-tight ${
                 light ? 'text-white' : 'text-[#0F172A]'
               } ${titleSizeClasses}`}
-              style={{ letterSpacing: '0.02em', lineHeight: 1.1 }}
+              style={{ letterSpacing: '0.01em', lineHeight: 1.15 }}
             >
               पार्थ न्यूज़
             </span>
-            <span className="bg-[#C8102E] text-white px-2.5 py-0.5 rounded-lg font-['Outfit','Plus_Jakarta_Sans',sans-serif] font-black tracking-widest text-[11px] sm:text-xs md:text-sm uppercase shadow-sm border border-red-600/30">
+            <span className="bg-[#C8102E] text-white px-2.5 py-0.5 rounded-lg font-['Outfit','Plus_Jakarta_Sans',sans-serif] font-black tracking-widest text-[11px] sm:text-xs md:text-sm uppercase shadow-2xs border border-red-600/30">
               PARTH NEWS
             </span>
           </div>
