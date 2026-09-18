@@ -36,7 +36,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
     experience: '',
     previousOrganization: '',
     reason: '',
-    profilePhoto: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=600&q=80',
+    profilePhoto: '',
     agreeDeclaration: false
   });
 
@@ -83,6 +83,10 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
       setErrorMsg('कृपया नियम व शर्तों की घोषणा स्वीकार करें (Please accept declaration)');
       return;
     }
+    if (!formData.profilePhoto && !photoPreview) {
+      setErrorMsg('कृपया अपनी पासपोर्ट साइज़ फोटो अपलोड करें (Please upload your passport size photo)');
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -102,7 +106,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
         experience: formData.experience.trim(),
         previousOrganization: formData.previousOrganization.trim(),
         reason: formData.reason.trim(),
-        profilePhoto: formData.profilePhoto || photoPreview || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=600&q=80'
+        profilePhoto: formData.profilePhoto || photoPreview || ''
       });
 
       setSubmittedApp(created);
@@ -449,16 +453,30 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <p className="text-[11px] text-gray-500 font-hindi">
                     JPG / PNG (अधिकतम 5MB)। स्पष्ट चेहरा एवं सादा बैकग्राउंड होना चाहिए।
                   </p>
-                  <label className="inline-flex items-center gap-2 bg-[#111111] hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer transition-colors">
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Upload Photo from Device</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="inline-flex items-center gap-2 bg-[#111111] hover:bg-black text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer transition-colors">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{photoPreview || formData.profilePhoto ? 'Change Photo' : 'Upload Photo from Device'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {(photoPreview || formData.profilePhoto) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhotoPreview('');
+                          setFormData(prev => ({ ...prev, profilePhoto: '' }));
+                        }}
+                        className="text-xs text-red-600 hover:text-red-700 font-semibold px-3 py-2 border border-red-200 rounded-xl hover:bg-red-50 transition-colors"
+                      >
+                        हटाएं (Remove)
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

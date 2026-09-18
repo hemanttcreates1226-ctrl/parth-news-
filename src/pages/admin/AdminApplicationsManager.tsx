@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   UserCheck, 
   Search, 
@@ -8,7 +8,7 @@ import {
   Clock, 
   Trash2, 
   X, 
-  CreditCard,
+  CreditCard, 
   AlertCircle,
   FileText,
   Phone,
@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { db } from '../../services/db';
 import { ReporterApplication } from '../../types';
+import { AdminConfirmDialog } from '../../components/admin/AdminConfirmDialog';
+import { AdminToast, ToastMessage } from '../../components/admin/AdminToast';
 
 interface AdminApplicationsManagerProps {
   onNavigateToIdCard?: (reporterId: string) => void;
@@ -28,44 +30,83 @@ export const AdminApplicationsManager: React.FC<AdminApplicationsManagerProps> =
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedApp, setSelectedApp] = useState<ReporterApplication | null>(null);
 
-  const refresh = () => setApplications(db.getApplications());
+  // Dialog States
+  const [approveTarget, setApproveTarget] = useState<ReporterApplication | null>(null);
+  const [designationChoice, setDesignationChoice] = useState('विशेष संवाददाता (Special Reporter)');
+  const [rejectTarget, setRejectTarget] = useState<ReporterApplication | null>(null);
+  const [rejectReason, setRejectReason] = useState('शैक्षणिक / विधिक मापदंड अपूर्ण');
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
 
-  const handleApprove = (app: ReporterApplication) => {
-    if (confirm(`क्या आप ${app.fullName} का संवाददाता आवेदन स्वीकृत करना चाहते हैं? (Approve application and generate Official Press ID?)`)) {
-      const generated = db.approveApplication(app.id);
-      refresh();
-      if (selectedApp?.id === app.id) {
-        setSelectedApp(db.getApplicationByNumber(app.applicationNumber) || null);
-      }
-      alert(`आवेदन स्वीकृत! नया रिपोर्टर आईडी जारी हुआ: ${generated.reporterId}`);
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setApplications(db.getApplications());
+    });
+    return unsub;
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ id: Date.now().toString(), type, message });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const refresh = () => {
+    const apps = db.getApplications();
+    setApplications(apps);
+    if (selectedApp) {
+      const updated = apps.find(a => a.id === selectedApp.id);
+      setSelectedApp(updated || null);
     }
   };
 
-  const handleReject = (app: ReporterApplication) => {
-    const reason = prompt('अस्वीकृति का कारण दर्ज करें (Rejection reason):', 'शैक्षणिक / विधिक मापदंड अपूर्ण');
-    if (reason !== null) {
-      db.rejectApplication(app.id, reason);
-      refresh();
-      if (selectedApp?.id === app.id) {
-        setSelectedApp(db.getApplicationByNumber(app.applicationNumber) || null);
-      }
+  const handleApproveClick = (app: ReporterApplication) => {
+    setApproveTarget(app);
+    setDesignationChoice('विशेष संवाददाता (Special Reporter)');
+  };
+
+  const handleConfirmApprove = () => {
+    if (!approveTarget) return;
+    const cleanDesignation = designationChoice.trim() || 'संवाददाता';
+    const result = db.approveReporterApplication(approveTarget.id, cleanDesignation, 'Chief Editor');
+    if (result) {
+      showToast(`आवेदन स्वीकृत! नया रिपोर्टर आईडी जारी: ${result.reporter.reporterId}`, 'success');
+    } else {
+      showToast('आवेदन स्वीकृत नहीं हो सका। कृपया पुनः प्रयास करें।', 'error');
     }
+    setApproveTarget(null);
+    refresh();
+  };
+
+  const handleRejectClick = (app: ReporterApplication) => {
+    setRejectTarget(app);
+    setRejectReason('शैक्षणिक / विधिक मापदंड अपूर्ण');
+  };
+
+  const handleConfirmReject = () => {
+    if (!rejectTarget) return;
+    db.rejectApplication(rejectTarget.id, rejectReason || 'मापदंड अपूर्ण');
+    showToast(`आवेदन अस्वीकार कर दिया गया।`, 'info');
+    setRejectTarget(null);
+    refresh();
   };
 
   const handleSetUnderReview = (app: ReporterApplication) => {
     db.setApplicationUnderReview(app.id);
+    showToast(`${app.fullName} का आवेदन 'जाँच जारी (Under Review)' स्थिति में कर दिया गया।`, 'info');
     refresh();
-    if (selectedApp?.id === app.id) {
-      setSelectedApp(db.getApplicationByNumber(app.applicationNumber) || null);
-    }
   };
 
-  const handleDelete = (id: string, name: string) => {
-    if (confirm(`क्या आप ${name} का आवेदन स्थायी रूप से हटाना चाहते हैं?`)) {
-      db.deleteApplication(id);
-      refresh();
-      if (selectedApp?.id === id) setSelectedApp(null);
-    }
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteTarget({ id, name });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    db.deleteApplication(deleteTarget.id);
+    showToast(`आवेदन स्थायी रूप से हटा दिया गया।`, 'success');
+    if (selectedApp?.id === deleteTarget.id) setSelectedApp(null);
+    setDeleteTarget(null);
+    refresh();
   };
 
   const filtered = applications.filter(a => {
@@ -184,24 +225,36 @@ export const AdminApplicationsManager: React.FC<AdminApplicationsManagerProps> =
                     <td className="px-5 py-3.5 text-right space-x-1.5">
                       <button
                         onClick={() => setSelectedApp(app)}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2.5 py-1 rounded-lg font-bold"
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer"
+                        title="View details"
                       >
                         Inspect
                       </button>
 
                       {app.status !== 'approved' && (
                         <button
-                          onClick={() => handleApprove(app)}
+                          onClick={() => handleApproveClick(app)}
                           title="Approve & Issue ID"
-                          className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg font-bold"
+                          className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer"
                         >
                           Approve
                         </button>
                       )}
 
+                      {app.status !== 'rejected' && (
+                        <button
+                          onClick={() => handleRejectClick(app)}
+                          title="Reject Application"
+                          className="bg-rose-50 hover:bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer"
+                        >
+                          Reject
+                        </button>
+                      )}
+
                       <button
-                        onClick={() => handleDelete(app.id, app.fullName)}
-                        className="p-1 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded"
+                        onClick={() => handleDeleteClick(app.id, app.fullName)}
+                        className="p-1 hover:bg-red-50 text-gray-400 hover:text-red-600 rounded transition-colors cursor-pointer"
+                        title="Delete record"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -216,7 +269,7 @@ export const AdminApplicationsManager: React.FC<AdminApplicationsManagerProps> =
 
       {/* INSPECT APPLICANT MODAL */}
       {selectedApp && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200 flex flex-col max-h-[92vh]">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -322,25 +375,33 @@ export const AdminApplicationsManager: React.FC<AdminApplicationsManagerProps> =
 
               {/* Action Buttons */}
               <div className="pt-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleSetUnderReview(selectedApp)}
-                    className="bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-2 rounded-xl font-bold"
+                    className="bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-2 rounded-xl font-bold cursor-pointer transition-colors"
                   >
                     Mark Under Review
                   </button>
+                  {selectedApp.status !== 'rejected' && (
+                    <button
+                      onClick={() => handleRejectClick(selectedApp)}
+                      className="bg-red-100 hover:bg-red-200 text-red-900 px-3 py-2 rounded-xl font-bold cursor-pointer transition-colors"
+                    >
+                      Reject Application
+                    </button>
+                  )}
                   <button
-                    onClick={() => handleReject(selectedApp)}
-                    className="bg-red-100 hover:bg-red-200 text-red-900 px-3 py-2 rounded-xl font-bold"
+                    onClick={() => handleDeleteClick(selectedApp.id, selectedApp.fullName)}
+                    className="bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 px-3 py-2 rounded-xl font-bold cursor-pointer transition-colors"
                   >
-                    Reject Application
+                    Delete
                   </button>
                 </div>
 
                 {selectedApp.status !== 'approved' && (
                   <button
-                    onClick={() => handleApprove(selectedApp)}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow flex items-center gap-1.5"
+                    onClick={() => handleApproveClick(selectedApp)}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Approve & Generate Press ID</span>
@@ -351,6 +412,64 @@ export const AdminApplicationsManager: React.FC<AdminApplicationsManagerProps> =
           </div>
         </div>
       )}
+
+      {/* APPROVE APPLICATION MODAL */}
+      <AdminConfirmDialog
+        isOpen={approveTarget !== null}
+        title="आवेदन स्वीकृत करें (Approve Reporter)"
+        message={`क्या आप ${approveTarget?.fullName} (${approveTarget?.district}, ${approveTarget?.state}) का संवाददाता आवेदन स्वीकृत करना चाहते हैं? स्वीकृत होते ही आधिकारिक प्रेस आईडी कार्ड (Press ID Card) तुरंत जनरेट हो जाएगा।`}
+        confirmText="स्वीकृत करें एवं प्रेस कार्ड जारी करें"
+        cancelText="रद्द करें (Cancel)"
+        variant="success"
+        inputLabel="पदनाम चुनें या दर्ज करें (Designation)"
+        inputValue={designationChoice}
+        onInputChange={setDesignationChoice}
+        inputPresets={[
+          'विशेष संवाददाता (Special Reporter)',
+          'वरिष्ठ संवाददाता (Senior Reporter)',
+          'तहसील संवाददाता (Tehsil Reporter)',
+          'ब्यूरो चीफ (Bureau Chief)',
+          'क्राइम रिपोर्टर (Crime Reporter)'
+        ]}
+        onConfirm={handleConfirmApprove}
+        onCancel={() => setApproveTarget(null)}
+      />
+
+      {/* REJECT APPLICATION MODAL */}
+      <AdminConfirmDialog
+        isOpen={rejectTarget !== null}
+        title="आवेदन अस्वीकार करें (Reject Application)"
+        message={`क्या आप ${rejectTarget?.fullName} का आवेदन अस्वीकार करना चाहते हैं? अस्वीकृति का कारण नीचे दर्ज करें:`}
+        confirmText="अस्वीकार करें (Reject)"
+        cancelText="रद्द करें (Cancel)"
+        variant="danger"
+        inputLabel="अस्वीकृति का कारण (Reason for Rejection)"
+        inputValue={rejectReason}
+        onInputChange={setRejectReason}
+        inputPresets={[
+          'शैक्षणिक / विधिक मापदंड अपूर्ण',
+          'पहचान पत्र / दस्तावेज अस्पष्ट',
+          'कार्यक्षेत्र में पद रिक्त नहीं',
+          'सत्यापन व अनुभव अपर्याप्त'
+        ]}
+        onConfirm={handleConfirmReject}
+        onCancel={() => setRejectTarget(null)}
+      />
+
+      {/* DELETE CONFIRM DIALOG */}
+      <AdminConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="आवेदन हटाएं (Delete Application Record)"
+        message={`क्या आप ${deleteTarget?.name} का आवेदन स्थायी रूप से हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।`}
+        confirmText="हाँ, हटाएं (Delete)"
+        cancelText="रद्द करें (Cancel)"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      {/* TOAST NOTIFICATION */}
+      <AdminToast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 };

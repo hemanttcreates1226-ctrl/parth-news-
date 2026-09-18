@@ -86,9 +86,6 @@ export const ParthNewsLogo: React.FC<LogoProps> = ({
             >
               पार्थ न्यूज़
             </span>
-            <span className="bg-[#C8102E] text-white px-2.5 py-0.5 rounded-lg font-['Outfit','Plus_Jakarta_Sans',sans-serif] font-black tracking-widest text-[11px] sm:text-xs md:text-sm uppercase shadow-2xs border border-red-600/30">
-              PARTH NEWS
-            </span>
           </div>
 
           {/* Official Tagline / Slogan */}

@@ -121,8 +121,30 @@ class DatabaseService {
     if (!localStorage.getItem(STORAGE_KEYS.AD_ENQUIRIES)) {
       localStorage.setItem(STORAGE_KEYS.AD_ENQUIRIES, JSON.stringify(INITIAL_AD_ENQUIRIES));
     }
-    if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
+    const existingSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+    if (!existingSettings) {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(INITIAL_SETTINGS));
+    } else {
+      try {
+        const parsed = JSON.parse(existingSettings);
+        if (!parsed.channelHead || parsed.contactPhone === '+91 98390 00000' || parsed.address?.includes('कस्तूरबा') || parsed.editorName?.includes('हेमंत')) {
+          const updated = {
+            ...parsed,
+            channelHead: 'राजीव राय',
+            channelHeadDesignation: 'चैनल हेड (Channel Head)',
+            editorName: 'राजीव राय (Channel Head)',
+            editorDesignation: 'चैनल हेड (Channel Head)',
+            contactPhone: '+91 9981065457',
+            whatsappNumber: '+91 9981065457',
+            address: 'अखाई मार्केट, अदालत के सामने मुंगावली जिला अशोकनगर मध्यप्रदेश',
+            headBureau: 'मुख्यालय ब्यूरो: अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)',
+            prayagrajBureau: 'अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)'
+          };
+          localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+        }
+      } catch {
+        localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(INITIAL_SETTINGS));
+      }
     }
     if (!localStorage.getItem(STORAGE_KEYS.MEDIA)) {
       localStorage.setItem(STORAGE_KEYS.MEDIA, JSON.stringify(INITIAL_MEDIA));
@@ -632,6 +654,18 @@ class DatabaseService {
     this.updateReporter(reporterId, { status });
   }
 
+  public deleteReporter(id: string): void {
+    const reporters = this.getReporters();
+    const rep = reporters.find(r => r.id === id || r.reporterId === id);
+    if (!rep) return;
+    const filtered = reporters.filter(r => r.id !== rep.id && r.reporterId !== rep.reporterId);
+    this.setItem(STORAGE_KEYS.REPORTERS, filtered);
+
+    // Also remove matching ID card
+    const idCards = this.getIdCards().filter(c => c.reporterId !== rep.reporterId);
+    this.setItem(STORAGE_KEYS.ID_CARDS, idCards);
+  }
+
   // --- ID CARDS ---
   public getIdCards(): IdCardRecord[] {
     return this.getItem<IdCardRecord[]>(STORAGE_KEYS.ID_CARDS, INITIAL_ID_CARDS);
@@ -640,6 +674,11 @@ class DatabaseService {
   public getIdCardByReporterId(reporterId: string): IdCardRecord | undefined {
     const normalized = reporterId.trim().toUpperCase();
     return this.getIdCards().find(c => c.reporterId.toUpperCase() === normalized);
+  }
+
+  public deleteIdCard(id: string): void {
+    const idCards = this.getIdCards().filter(c => c.id !== id && c.reporterId !== id);
+    this.setItem(STORAGE_KEYS.ID_CARDS, idCards);
   }
 
   // --- CONTACTS ---

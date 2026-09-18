@@ -22,12 +22,12 @@ interface ReporterIdPageProps {
 }
 
 export const ReporterIdPage: React.FC<ReporterIdPageProps> = ({ initialId = '', onNavigate }) => {
-  const [searchId, setSearchId] = useState(initialId || 'PN-RPT-00001');
+  const [searchId, setSearchId] = useState(initialId);
   const [reporter, setReporter] = useState<Reporter | undefined>(() => 
-    db.getReporterById(initialId || 'PN-RPT-00001')
+    initialId ? db.getReporterById(initialId) : undefined
   );
   const [idCardRecord, setIdCardRecord] = useState<IdCardRecord | undefined>(() =>
-    db.getIdCardByReporterId(initialId || 'PN-RPT-00001')
+    initialId ? db.getIdCardByReporterId(initialId) : undefined
   );
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -41,7 +41,18 @@ export const ReporterIdPage: React.FC<ReporterIdPageProps> = ({ initialId = '', 
       setReporter(rep);
       setIdCardRecord(card);
     }
-  }, [initialId]);
+
+    const unsub = db.subscribe(() => {
+      const activeId = searchId.trim().toUpperCase() || initialId;
+      if (activeId) {
+        const rep = db.getReporterById(activeId);
+        const card = db.getIdCardByReporterId(activeId);
+        setReporter(rep);
+        setIdCardRecord(card);
+      }
+    });
+    return unsub;
+  }, [initialId, searchId]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +140,7 @@ export const ReporterIdPage: React.FC<ReporterIdPageProps> = ({ initialId = '', 
             <input
               type="text"
               required
-              placeholder="Enter Reporter ID (e.g. PN-RPT-00001)"
+              placeholder="Enter Reporter ID"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value)}
               className="w-full bg-gray-50 border border-gray-300 rounded-xl pl-10 pr-3 py-2 text-xs sm:text-sm font-mono font-bold uppercase focus:outline-hidden focus:border-[#C8102E]"
@@ -142,25 +153,13 @@ export const ReporterIdPage: React.FC<ReporterIdPageProps> = ({ initialId = '', 
             Find Card
           </button>
         </form>
-
-        {/* Quick sample chips */}
-        <div className="flex items-center justify-center gap-2 mt-3 pt-3 border-t border-gray-100 text-xs">
-          <span className="text-[11px] text-gray-400">Sample Active IDs:</span>
-          <button
-            onClick={() => { setSearchId('PN-RPT-00001'); setReporter(db.getReporterById('PN-RPT-00001')); }}
-            className="font-mono text-[11px] font-bold text-[#C8102E] hover:underline"
-          >
-            PN-RPT-00001
-          </button>
-          <span>•</span>
-          <button
-            onClick={() => { setSearchId('PN-RPT-00002'); setReporter(db.getReporterById('PN-RPT-00002')); }}
-            className="font-mono text-[11px] font-bold text-[#C8102E] hover:underline"
-          >
-            PN-RPT-00002
-          </button>
-        </div>
       </div>
+
+      {!reporter && !errorMsg && (
+        <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center max-w-xl mx-auto text-xs text-gray-500 font-hindi">
+          कृपया अपना अधिकृत रिपोर्टर आईडी (Press ID) दर्ज करें और <strong>Find Card</strong> पर क्लिक करें।
+        </div>
+      )}
 
       {errorMsg && (
         <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded-r-xl max-w-xl mx-auto flex items-center gap-3 text-red-800 text-xs sm:text-sm">

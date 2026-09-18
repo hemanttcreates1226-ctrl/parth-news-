@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit3, Trash2, Tv, Play, X, Eye } from 'lucide-react';
 import { db } from '../../services/db';
 import { VideoNews } from '../../types';
+import { AdminConfirmDialog } from '../../components/admin/AdminConfirmDialog';
+import { AdminToast, ToastMessage } from '../../components/admin/AdminToast';
 
 interface AdminVideosManagerProps {
   initialCreateOpen?: boolean;
@@ -13,13 +15,29 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
   const [isModalOpen, setIsModalOpen] = useState(initialCreateOpen);
   const [editingVideo, setEditingVideo] = useState<VideoNews | null>(null);
 
+  // Dialog & Toast States
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setVideos(db.getVideos());
+    });
+    return unsub;
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ id: Date.now().toString(), type, message });
+    setTimeout(() => setToast(null), 3500);
+  };
+
   const [formData, setFormData] = useState({
     title: '',
     titleHindi: '',
     category: 'Prayagraj',
     categorySlug: 'prayagraj',
     description: '',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    videoUrl: '',
     embedUrl: '',
     thumbnail: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=1200&q=80',
     duration: '04:15',
@@ -37,7 +55,7 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
       category: 'Prayagraj',
       categorySlug: 'prayagraj',
       description: '',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      videoUrl: '',
       embedUrl: '',
       thumbnail: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=1200&q=80',
       duration: '04:15',
@@ -65,11 +83,16 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`क्या आप वीडियो "${title}" को हटाना चाहते हैं?`)) {
-      db.deleteVideo(id);
-      refresh();
-    }
+  const handleDeleteClick = (id: string, title: string) => {
+    setDeleteTarget({ id, title });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    db.deleteVideo(deleteTarget.id);
+    showToast(`वीडियो "${deleteTarget.title}" सफलतापूर्वक हटा दिया गया।`, 'success');
+    setDeleteTarget(null);
+    refresh();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -90,6 +113,7 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
         reporterName: formData.reporterName,
         featured: formData.featured
       });
+      showToast('वीडियो बुलेटिन सफलतापूर्वक अपडेट हुआ!', 'success');
     } else {
       db.createVideo({
         title: formData.title || formData.titleHindi,
@@ -104,6 +128,7 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
         reporterName: formData.reporterName,
         featured: formData.featured
       });
+      showToast('नया वीडियो बुलेटिन सफलतापूर्वक प्रकाशित हुआ!', 'success');
     }
 
     setIsModalOpen(false);
@@ -131,7 +156,7 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
 
         <button
           onClick={handleOpenCreate}
-          className="bg-neutral-900 hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center gap-1.5 self-start sm:self-auto"
+          className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 self-start sm:self-auto cursor-pointer transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>नया वीडियो जोड़ें (Add Video)</span>
@@ -180,10 +205,10 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
                   <td className="px-4 py-3.5 font-mono">{v.duration}</td>
                   <td className="px-4 py-3.5 font-mono">{v.views || 0}</td>
                   <td className="px-5 py-3.5 text-right space-x-1.5">
-                    <button onClick={() => handleOpenEdit(v)} className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700">
+                    <button onClick={() => handleOpenEdit(v)} className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700 hover:text-black transition-colors cursor-pointer" title="Edit Video">
                       <Edit3 className="w-4 h-4" />
                     </button>
-                    <button onClick={() => handleDelete(v.id, v.titleHindi || v.title)} className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600">
+                    <button onClick={() => handleDeleteClick(v.id, v.titleHindi || v.title)} className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors cursor-pointer" title="Delete Video">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
@@ -196,7 +221,7 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
 
       {/* Video Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200 flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-base font-bold font-hindi text-gray-900">
@@ -301,13 +326,13 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-neutral-900 hover:bg-black text-white font-bold px-6 py-2 rounded-xl shadow"
+                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white font-bold px-6 py-2 rounded-xl shadow cursor-pointer transition-colors"
                 >
                   Save Video
                 </button>
@@ -316,6 +341,21 @@ export const AdminVideosManager: React.FC<AdminVideosManagerProps> = ({ initialC
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AdminConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="वीडियो हटाएं (Delete Video)"
+        message={`क्या आप वीडियो "${deleteTarget?.title}" को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।`}
+        confirmText="हाँ, हटाएं (Delete)"
+        cancelText="रद्द करें (Cancel)"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      {/* Toast Notification */}
+      <AdminToast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 };

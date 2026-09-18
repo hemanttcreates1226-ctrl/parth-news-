@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { db } from '../../services/db';
 import { Post, Category } from '../../types';
+import { AdminConfirmDialog } from '../../components/admin/AdminConfirmDialog';
+import { AdminToast, ToastMessage } from '../../components/admin/AdminToast';
 
 interface AdminNewsManagerProps {
   initialCreateOpen?: boolean;
@@ -22,8 +24,8 @@ interface AdminNewsManagerProps {
 
 export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreateOpen = false }) => {
   const [posts, setPosts] = useState<Post[]>(db.getPosts());
-  const [categories] = useState<Category[]>(db.getCategories());
-  const [reporters] = useState(db.getReporters());
+  const [categories, setCategories] = useState<Category[]>(db.getCategories());
+  const [reporters, setReporters] = useState(db.getReporters());
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCatFilter, setSelectedCatFilter] = useState('all');
@@ -31,7 +33,13 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
   // Edit / Create Modal State
   const [isModalOpen, setIsModalOpen] = useState(initialCreateOpen);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
+  // Delete Dialog & Toast state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+
+  // Form Data State
   const [formData, setFormData] = useState({
     title: '',
     titleHindi: '',
@@ -41,11 +49,25 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
     featuredImage: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1200&q=80',
     breaking: false,
     featured: false,
-    status: 'published' as 'published' | 'draft',
+    status: 'published' as 'published' | 'draft' | 'archived',
     reporterName: 'पार्थ न्यूज़ ब्यूरो',
-    reporterRole: 'विशेष संवाददाता',
+    reporterRole: 'वरिष्ठ संवाददाता',
     tagsInput: 'प्रयागराज, ताज़ा खबर, यूपी'
   });
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setPosts(db.getPosts());
+      setCategories(db.getCategories());
+      setReporters(db.getReporters());
+    });
+    return unsub;
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ id: Date.now().toString(), type, message });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const refreshList = () => {
     setPosts(db.getPosts());
@@ -53,6 +75,7 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
 
   const handleOpenCreate = () => {
     setEditingPost(null);
+    setValidationError(null);
     setFormData({
       title: '',
       titleHindi: '',
@@ -72,6 +95,7 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
 
   const handleOpenEdit = (post: Post) => {
     setEditingPost(post);
+    setValidationError(null);
     setFormData({
       title: post.title,
       titleHindi: post.titleHindi || '',
@@ -89,19 +113,25 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`क्या आप खबर "${title}" को हटाना चाहते हैं? (Delete this news story?)`)) {
-      db.deletePost(id);
-      refreshList();
-    }
+  const handleDeleteClick = (id: string, title: string) => {
+    setDeleteTarget({ id, title });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    db.deletePost(deleteTarget.id);
+    showToast(`खबर "${deleteTarget.title}" सफलतापूर्वक हटा दी गई।`, 'success');
+    setDeleteTarget(null);
+    refreshList();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim() && !formData.titleHindi.trim()) {
-      alert('कृपया शीर्षक (Title) दर्ज करें');
+      setValidationError('कृपया शीर्षक (Title) दर्ज करें');
       return;
     }
+    setValidationError(null);
 
     const catObj = categories.find(c => c.slug === formData.categorySlug);
     const categoryName = catObj ? catObj.name : 'Prayagraj';
@@ -127,6 +157,7 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
         reporterRole: formData.reporterRole,
         tags
       });
+      showToast('खबर सफलतापूर्वक अपडेट हो गई!', 'success');
     } else {
       db.createPost({
         title: formData.title || formData.titleHindi,
@@ -143,6 +174,7 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
         reporterRole: formData.reporterRole,
         tags
       });
+      showToast('नई खबर सफलतापूर्वक प्रकाशित हुई!', 'success');
     }
 
     setIsModalOpen(false);
@@ -287,15 +319,15 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
                     <td className="px-5 py-3.5 text-right space-x-1.5">
                       <button
                         onClick={() => handleOpenEdit(post)}
-                        className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700 hover:text-black transition-colors"
-                        title="Edit"
+                        className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700 hover:text-black transition-colors cursor-pointer"
+                        title="Edit Story"
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(post.id, post.titleHindi || post.title)}
-                        className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors"
-                        title="Delete"
+                        onClick={() => handleDeleteClick(post.id, post.titleHindi || post.title)}
+                        className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                        title="Delete Story"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -310,7 +342,7 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
 
       {/* CREATE / EDIT MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden border border-gray-200 flex flex-col max-h-[92vh]">
             {/* Modal Header */}
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
@@ -327,6 +359,15 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
 
             {/* Modal Body */}
             <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 text-xs">
+              {validationError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl font-bold font-hindi text-xs flex items-center justify-between">
+                  <span>{validationError}</span>
+                  <button type="button" onClick={() => setValidationError(null)} className="text-red-400 hover:text-red-600">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
               <div>
                 <label className="block font-bold text-gray-700 mb-1">
                   मुख्य शीर्षक (Headline in Hindi) *
@@ -481,13 +522,13 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white font-bold px-6 py-2 rounded-xl shadow"
+                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white font-bold px-6 py-2 rounded-xl shadow cursor-pointer"
                 >
                   {editingPost ? 'Save Changes' : 'Publish Story'}
                 </button>
@@ -496,6 +537,21 @@ export const AdminNewsManager: React.FC<AdminNewsManagerProps> = ({ initialCreat
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AdminConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="खबर हटाएं (Delete News Story)"
+        message={`क्या आप खबर "${deleteTarget?.title}" को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती और वेबसाइट से तुरंत हट जाएगी।`}
+        confirmText="हाँ, हटाएं (Delete)"
+        cancelText="रद्द करें (Cancel)"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      {/* Toast Notification */}
+      <AdminToast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 };

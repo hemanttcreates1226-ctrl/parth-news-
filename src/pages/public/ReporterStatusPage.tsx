@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   ShieldCheck, 
@@ -24,6 +24,23 @@ export const ReporterStatusPage: React.FC<ReporterStatusPageProps> = ({ onNaviga
   const [searched, setSearched] = useState(false);
   const [application, setApplication] = useState<ReporterApplication | null>(null);
   const [reporterRecord, setReporterRecord] = useState<Reporter | null>(null);
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      if (searched && searchCode.trim()) {
+        const query = searchCode.trim().toUpperCase();
+        const app = db.getApplicationByNumber(query);
+        setApplication(app || null);
+        const rep = db.getReporterById(query);
+        setReporterRecord(rep || null);
+        if (app && app.generatedReporterId) {
+          const linkedRep = db.getReporterById(app.generatedReporterId);
+          if (linkedRep) setReporterRecord(linkedRep);
+        }
+      }
+    });
+    return unsub;
+  }, [searched, searchCode]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,33 +146,6 @@ export const ReporterStatusPage: React.FC<ReporterStatusPageProps> = ({ onNaviga
             <span>Check Status (स्थिति जांचें)</span>
           </button>
         </form>
-
-        {/* Quick Demo Fill Buttons for easy testing */}
-        <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-          <span className="text-[11px] text-gray-400 block mb-2 font-medium">
-            त्वरित परीक्षण हेतु नमूना नंबर चुनें (Click to test sample codes):
-          </span>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
-            <button
-              onClick={() => { setSearchCode('PN-REP-2026-00001'); }}
-              className="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold"
-            >
-              PN-REP-2026-00001 (Approved)
-            </button>
-            <button
-              onClick={() => { setSearchCode('PN-REP-2026-00002'); }}
-              className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold"
-            >
-              PN-REP-2026-00002 (Under Review)
-            </button>
-            <button
-              onClick={() => { setSearchCode('PN-REP-2026-00004'); }}
-              className="bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold"
-            >
-              PN-REP-2026-00004 (Rejected)
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Result Display */}

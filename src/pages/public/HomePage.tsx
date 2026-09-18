@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { 
   Flame, 
   Tv, 
@@ -8,7 +9,6 @@ import {
   ShieldCheck, 
   UserPlus, 
   TrendingUp, 
-  Sparkles, 
   Play,
   Share2,
   Calendar
@@ -88,46 +88,96 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* 3. REPORTER APPLICATION BANNER */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#990000] via-[#C8102E] to-[#7B0D1E] text-white p-6 sm:p-8 shadow-lg">
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center md:text-left">
-            <div className="inline-flex items-center gap-1.5 bg-black/30 text-red-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>पार्थ न्यूज़ संवाददाता भर्ती 2026</span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-black font-hindi tracking-tight">
-              पार्थ न्यूज़ के साथ पत्रकारिता में बनाएं अपनी पहचान
+      {/* 3. REPORTER APPLICATION BANNER - LIGHT THEMED & ANIMATED */}
+      <motion.section 
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white via-rose-50/40 to-red-50/60 border border-red-200/90 hover:border-red-400/80 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500"
+      >
+        {/* Floating animated ambient light orbs */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.15, 1],
+            x: [0, 15, 0],
+            y: [0, -10, 0]
+          }}
+          transition={{ 
+            duration: 8, 
+            repeat: Infinity, 
+            repeatType: 'reverse', 
+            ease: 'easeInOut' 
+          }}
+          className="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-red-400/10 blur-3xl pointer-events-none"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            x: [0, -10, 0],
+            y: [0, 15, 0]
+          }}
+          transition={{ 
+            duration: 10, 
+            repeat: Infinity, 
+            repeatType: 'reverse', 
+            ease: 'easeInOut' 
+          }}
+          className="absolute -bottom-10 left-1/4 w-56 h-56 rounded-full bg-amber-400/10 blur-2xl pointer-events-none"
+        />
+
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            {/* Light Themed Bold Title */}
+            <h3 className="text-2xl sm:text-3xl font-black font-hindi tracking-tight text-gray-900 leading-tight">
+              पार्थ न्यूज़ के साथ पत्रकारिता में{' '}
+              <span className="text-[#C8102E] relative inline-block">
+                बनाएं अपनी पहचान
+                <svg className="absolute -bottom-1 left-0 w-full h-1.5 text-red-300" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="3" fill="none" />
+                </svg>
+              </span>
             </h3>
-            <p className="text-sm text-red-100 max-w-2xl font-hindi leading-relaxed">
+
+            {/* Description */}
+            <p className="text-sm sm:text-[15px] text-gray-600 font-hindi leading-relaxed">
               अपने जनपद और तहसील से ज़मीनी सच को जनता तक पहुंचाएं। डिजिटल मीडिया प्रेस कार्ड, ऑनलाइन वेरिफिकेशन और आधिकारिक मान्यता प्राप्त करें।
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3 shrink-0">
-            <button
+          {/* Animated Action Buttons */}
+          <div className="flex flex-wrap sm:flex-nowrap gap-3 shrink-0 w-full sm:w-auto">
+            <motion.button
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => onNavigate('/apply-reporter')}
-              className="bg-white hover:bg-gray-100 text-[#C8102E] font-black text-sm px-5 py-3 rounded-xl shadow-md transition-all flex items-center gap-2"
+              className="flex-1 sm:flex-initial bg-gradient-to-r from-[#C8102E] to-[#A30C25] hover:from-[#B00D27] hover:to-[#8B0A1E] text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-md hover:shadow-lg hover:shadow-red-500/25 transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
               <span>Apply Online (आवेदन करें)</span>
-            </button>
-            <button
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => onNavigate('/reporter-status')}
-              className="bg-black/40 hover:bg-black/60 text-white font-bold text-sm px-4 py-3 rounded-xl border border-white/30 transition-all flex items-center gap-2"
+              className="flex-1 sm:flex-initial bg-white hover:bg-red-50/40 text-gray-800 hover:text-[#C8102E] font-bold text-sm px-5 py-3.5 rounded-xl border border-gray-300 hover:border-red-300 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Application Status</span>
-            </button>
+            </motion.button>
           </div>
         </div>
-
-        {/* Decorative background circle */}
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-white/5 pointer-events-none"></div>
-      </section>
+      </motion.section>
 
       {/* 4. VIDEO NEWS SECTION */}
-      <section className="bg-white text-gray-900 rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-200">
+      <motion.section 
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="bg-white text-gray-900 rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-200"
+      >
         <div className="flex items-center justify-between pb-3 border-b-2 border-red-600 mb-5">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-600 rounded-xs"></div>
@@ -138,23 +188,30 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </div>
           <button
             onClick={() => onNavigate('/videos')}
-            className="text-xs sm:text-sm font-bold text-[#C8102E] hover:underline flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-[#C8102E] hover:underline flex items-center gap-1 group cursor-pointer"
           >
             <span>सभी वीडियो देखें</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.slice(0, 3).map((video) => (
-            <VideoCard
+          {videos.slice(0, 3).map((video, idx) => (
+            <motion.div
               key={video.id}
-              video={video}
-              onPlay={() => setActiveVideo(video)}
-            />
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+            >
+              <VideoCard
+                video={video}
+                onPlay={() => setActiveVideo(video)}
+              />
+            </motion.div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* 5. EDITORIAL & OPINION ARTICLES */}
       <section className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200 shadow-xs">

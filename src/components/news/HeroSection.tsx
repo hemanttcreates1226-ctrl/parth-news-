@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, User, ArrowRight, Flame, Eye, Sparkles } from 'lucide-react';
+import { Clock, User, ArrowRight, Flame } from 'lucide-react';
 import { Post } from '../../types';
 
 interface HeroSectionProps {
@@ -43,10 +43,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             मुख्य समाचार (Top Headlines)
           </h2>
         </div>
-        <div className="text-xs font-semibold text-[#C8102E] flex items-center gap-1 font-hindi">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>पार्थ न्यूज़ विशेष पड़ताल</span>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -81,9 +77,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     <Flame className="w-3 h-3 text-red-500 fill-red-500" /> BREAKING
                   </span>
                 )}
-                <span className="bg-black/60 text-gray-200 text-xs font-medium px-2.5 py-1 rounded backdrop-blur-xs flex items-center gap-1">
-                  <Eye className="w-3 h-3" /> {lead.views} पाठकों द्वारा पढ़ा गया
-                </span>
               </div>
 
               {/* Title & Overlay Content for mobile/desktop */}
@@ -107,9 +100,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <span className="flex items-center gap-1 text-gray-500">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{formatDate(lead.publishedAt || lead.createdAt)}</span>
-                </span>
-                <span className="hidden md:inline text-gray-400">
-                  {lead.readTimeMinutes || 3} मिनट पठन
                 </span>
               </div>
 
@@ -147,10 +137,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-[10px] font-bold uppercase text-[#C8102E] tracking-wider">
                       {post.category}
-                    </span>
-                    <span className="text-[10px] text-gray-400">•</span>
-                    <span className="text-[10px] text-gray-400">
-                      {formatDate(post.publishedAt || post.createdAt)}
                     </span>
                   </div>
                   <h4 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#C8102E] line-clamp-2 leading-snug font-hindi transition-colors">

@@ -166,17 +166,17 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
       {/* Navigation Bar (Desktop Sticky) */}
       <nav className="bg-white text-gray-800 border-t border-b border-gray-200 hidden lg:block overflow-x-auto scrollbar-none shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <ul className="flex items-center gap-1 whitespace-nowrap py-1.5 text-[13px] font-semibold">
+          <ul className="flex items-center gap-1 whitespace-nowrap py-1.5 font-['Outfit',sans-serif] text-[13.5px] font-bold tracking-wide">
             {navItems.map((item) => {
               const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
               return (
                 <li key={item.path}>
                   <button
                     onClick={() => handleNavClick(item.path)}
-                    className={`px-3 py-1.5 rounded-lg transition-all relative font-medium ${
+                    className={`px-3 py-1.5 rounded-lg transition-all relative cursor-pointer ${
                       isActive 
-                        ? 'bg-[#C8102E] text-white font-bold shadow-xs' 
-                        : 'text-gray-700 hover:text-[#C8102E] hover:bg-red-50/80 font-semibold'
+                        ? 'bg-[#C8102E] text-white font-extrabold shadow-xs' 
+                        : 'text-gray-700 hover:text-[#C8102E] hover:bg-red-50/80 font-bold'
                     }`}
                   >
                     <span>{item.label}</span>
@@ -190,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
           <div className="flex items-center gap-2 pl-3">
             <button
               onClick={() => handleNavClick('/videos')}
-              className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-['Outfit',sans-serif] text-xs font-black px-3 py-1.5 rounded-lg shadow-xs transition-colors cursor-pointer tracking-wider"
             >
               <Tv className="w-3.5 h-3.5" />
               <span>LIVE VIDEOS</span>
@@ -201,27 +201,27 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[108px] z-50 bg-black/60 backdrop-blur-xs flex flex-col">
+        <div className="lg:hidden fixed inset-0 top-[108px] z-50 bg-slate-900/40 backdrop-blur-xs flex flex-col">
           <div className="bg-white text-neutral-900 w-full max-h-[85vh] overflow-y-auto shadow-2xl border-b border-gray-200 p-4 space-y-4">
             {/* Action Buttons in Mobile Drawer */}
             <div className="grid grid-cols-2 gap-2 pb-3 border-b border-gray-100">
               <button
                 onClick={() => handleNavClick('/apply-reporter')}
-                className="bg-[#C8102E] text-white p-2.5 rounded font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                className="bg-[#C8102E] text-white p-2.5 rounded-xl font-bold font-['Outfit',sans-serif] text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>Apply as Reporter</span>
               </button>
               <button
                 onClick={() => handleNavClick('/reporter-status')}
-                className="bg-neutral-900 text-white p-2.5 rounded font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                className="bg-neutral-900 text-white p-2.5 rounded-xl font-bold font-['Outfit',sans-serif] text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <CreditCard className="w-4 h-4 text-red-400" />
                 <span>Reporter Status</span>
               </button>
               <button
                 onClick={() => handleNavClick('/reporter-id')}
-                className="bg-gray-100 text-neutral-800 p-2.5 rounded font-bold text-xs flex items-center justify-center gap-1.5 col-span-2 border border-gray-300"
+                className="bg-gray-100 text-neutral-800 p-2.5 rounded-xl font-bold font-['Outfit',sans-serif] text-xs flex items-center justify-center gap-1.5 col-span-2 border border-gray-300 cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4 text-[#C8102E]" />
                 <span>Download Digital Reporter ID Card</span>
@@ -230,20 +230,20 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
 
             {/* Navigation Category List */}
             <div className="space-y-1">
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2 py-1">
+              <div className="text-xs font-black font-['Outfit',sans-serif] text-gray-500 uppercase tracking-wider px-2 py-1">
                 News Sections
               </div>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-2 gap-1.5">
                 {navItems.map((item) => (
                   <button
                     key={item.path}
                     onClick={() => handleNavClick(item.path)}
-                    className={`text-left px-3 py-2 rounded text-sm font-medium flex items-center justify-between ${
-                      currentPath === item.path ? 'bg-red-50 text-[#C8102E] font-bold' : 'hover:bg-gray-100 text-gray-700'
+                    className={`text-left px-3 py-2 rounded-xl text-sm font-medium flex items-center justify-between cursor-pointer transition-colors ${
+                      currentPath === item.path ? 'bg-red-50 text-[#C8102E] font-bold border border-red-200' : 'hover:bg-gray-100 text-gray-700 border border-transparent'
                     }`}
                   >
-                    <span>{item.label}</span>
-                    <span className="font-hindi text-xs text-gray-400">{item.labelHindi}</span>
+                    <span className="font-['Outfit',sans-serif] font-bold text-xs tracking-wide">{item.label}</span>
+                    <span className="font-['Mukta',sans-serif] text-xs text-gray-500 font-semibold">{item.labelHindi}</span>
                   </button>
                 ))}
               </div>
@@ -251,12 +251,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
 
             {/* Quick Links & Legal */}
             <div className="pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2">
-              <div className="flex flex-wrap gap-3">
-                <button onClick={() => handleNavClick('/about')} className="hover:text-black">About Parth News</button>
-                <button onClick={() => handleNavClick('/contact')} className="hover:text-black">Contact Bureau</button>
-                <button onClick={() => handleNavClick('/advertise')} className="hover:text-black">Advertise</button>
+              <div className="flex flex-wrap gap-3 font-['Outfit',sans-serif] font-medium">
+                <button onClick={() => handleNavClick('/about')} className="hover:text-black cursor-pointer">About Parth News</button>
+                <button onClick={() => handleNavClick('/contact')} className="hover:text-black cursor-pointer">Contact Bureau</button>
+                <button onClick={() => handleNavClick('/advertise')} className="hover:text-black cursor-pointer">Advertise</button>
               </div>
-              <p className="font-hindi text-gray-500 text-[11px] pt-1">
+              <p className="font-['Mukta',sans-serif] text-gray-500 text-xs pt-1 font-semibold">
                 पार्थ न्यूज़ — सच के साथ, एक कदम आगे
               </p>
             </div>

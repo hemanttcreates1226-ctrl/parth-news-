@@ -45,7 +45,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onSuccess, onNav
           <div className="flex justify-center">
             <ParthNewsLogo variant="full" size="xl" />
           </div>
-          <div className="inline-flex items-center gap-1.5 bg-neutral-900 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-xs">
+          <div className="inline-flex items-center gap-1.5 bg-red-50 border border-red-200 text-[#C8102E] text-[11px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-red-400" />
             <span>CENTRAL EDITORIAL CMS & ADMIN</span>
           </div>

@@ -1,42 +1,5 @@
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
-
-/**
- * Converts any CSS color string (including oklch, oklab, color(display-p3), etc.)
- * into standard hex or rgba using an off-screen canvas context.
- */
-function sanitizeColorValue(val: string): string {
-  if (!val || typeof val !== 'string') return val;
-  if (
-    !val.includes('oklch') &&
-    !val.includes('oklab') &&
-    !val.includes('color(') &&
-    !val.includes('color-mix') &&
-    !val.includes('lch(')
-  ) {
-    return val;
-  }
-
-  try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1;
-    canvas.height = 1;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return '#222222';
-
-    return val.replace(/oklch\([^)]+\)|oklab\([^)]+\)|color\([^)]+\)|color-mix\([^)]+\)/gi, (match) => {
-      try {
-        ctx.fillStyle = '#000000';
-        ctx.fillStyle = match;
-        return ctx.fillStyle || '#333333';
-      } catch {
-        return '#333333';
-      }
-    });
-  } catch {
-    return '#333333';
-  }
-}
 
 export async function generateAndDownloadIdCardPdf(
   elementId: string,
@@ -49,66 +12,16 @@ export async function generateAndDownloadIdCardPdf(
       throw new Error(`Element with id "${elementId}" not found`);
     }
 
-    // Capture with high scale and oklch-sanitization in cloned document
+    // Capture with html2canvas-pro which natively parses modern CSS color spaces (oklch, oklab, etc.)
     const canvas = await html2canvas(cardElement, {
       scale: 2.5,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#FFFFFF',
       logging: false,
-      onclone: (clonedDoc: Document, clonedEl: HTMLElement) => {
-        // 1. Sanitize all stylesheet rules in the cloned document that might contain oklch
-        try {
-          const styleElements = clonedDoc.querySelectorAll('style');
-          styleElements.forEach((styleTag) => {
-            if (
-              styleTag.textContent &&
-              (styleTag.textContent.includes('oklch') ||
-                styleTag.textContent.includes('oklab') ||
-                styleTag.textContent.includes('color('))
-            ) {
-              styleTag.textContent = sanitizeColorValue(styleTag.textContent);
-            }
-          });
-        } catch (e) {
-          console.warn('Style tag sanitization warning:', e);
-        }
-
-        // 2. Explicitly sanitize inline & computed colors on all nodes of the ID card
-        try {
-          const allNodes = [clonedEl, ...Array.from(clonedEl.querySelectorAll('*'))] as HTMLElement[];
-          allNodes.forEach((node) => {
-            if (!node || !node.style) return;
-
-            const computed = window.getComputedStyle(node);
-            const checkProps = [
-              'backgroundColor',
-              'color',
-              'borderColor',
-              'borderTopColor',
-              'borderRightColor',
-              'borderBottomColor',
-              'borderLeftColor',
-              'outlineColor',
-              'boxShadow'
-            ] as const;
-
-            checkProps.forEach((prop) => {
-              const val = computed[prop];
-              if (val && typeof val === 'string' && (val.includes('oklch') || val.includes('oklab'))) {
-                (node.style as any)[prop] = sanitizeColorValue(val);
-              }
-            });
-
-            // Clean inline style attribute if present
-            const styleAttr = node.getAttribute('style');
-            if (styleAttr && (styleAttr.includes('oklch') || styleAttr.includes('oklab'))) {
-              node.setAttribute('style', sanitizeColorValue(styleAttr));
-            }
-          });
-        } catch (e) {
-          console.warn('Node style sanitization warning:', e);
-        }
+      onclone: (_clonedDoc: Document, clonedEl: HTMLElement) => {
+        // Ensure card container is fully rendered and styled
+        clonedEl.style.display = 'block';
       }
     });
 

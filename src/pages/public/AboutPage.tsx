@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Target, Eye, Award, CheckCircle2, MapPin, Users, HeartHandshake } from 'lucide-react';
+import { Shield, Target, Eye, Award, CheckCircle2, MapPin, Users, HeartHandshake, UserCheck, Phone } from 'lucide-react';
 import { ParthNewsLogo } from '../../components/common/ParthNewsLogo';
 import { db } from '../../services/db';
 
@@ -75,22 +75,36 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        {/* Bureau Locations */}
+        {/* Leadership & Headquarters Details */}
         <div className="pt-6 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1.5">
-            <div className="flex items-center gap-1.5 text-gray-900 font-bold text-sm">
-              <MapPin className="w-4 h-4 text-[#C8102E]" />
-              <span>प्रयागराज मुख्यालय (Prayagraj Bureau)</span>
+          <div className="bg-red-50/70 p-5 rounded-2xl border border-red-100 space-y-2">
+            <div className="flex items-center gap-2 text-gray-900 font-bold text-sm">
+              <UserCheck className="w-5 h-5 text-[#C8102E]" />
+              <span>चैनल हेड (Channel Head)</span>
             </div>
-            <p className="text-gray-600 font-hindi">{settings.address}</p>
+            <p className="text-gray-900 font-bold text-lg font-hindi text-[#C8102E]">
+              {settings.channelHead || 'राजीव राय'}
+            </p>
+            <div className="flex items-center gap-1.5 text-gray-700 font-hindi text-xs pt-1">
+              <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>मो. नं. (Mob): </span>
+              <a href={`tel:${settings.contactPhone}`} className="font-bold text-gray-900 hover:text-[#C8102E]">
+                {settings.contactPhone}
+              </a>
+            </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-1.5">
-            <div className="flex items-center gap-1.5 text-gray-900 font-bold text-sm">
-              <MapPin className="w-4 h-4 text-[#C8102E]" />
-              <span>लखनऊ राज्य ब्यूरो (Lucknow State Bureau)</span>
+          <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-2">
+            <div className="flex items-center gap-2 text-gray-900 font-bold text-sm">
+              <MapPin className="w-5 h-5 text-[#C8102E]" />
+              <span>कार्यालय पता (Office Address)</span>
             </div>
-            <p className="text-gray-600 font-hindi">{settings.headBureau}</p>
+            <p className="text-gray-800 font-hindi leading-relaxed text-xs">
+              {settings.address}
+            </p>
+            <p className="text-gray-500 font-hindi text-[11px] pt-1">
+              पार्थ न्यूज़ डिजिटल मीडिया नेटवर्क
+            </p>
           </div>
         </div>
       </div>

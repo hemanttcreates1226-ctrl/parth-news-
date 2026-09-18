@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit3, Trash2, FolderTree, X, Check } from 'lucide-react';
 import { db } from '../../services/db';
 import { Category } from '../../types';
+import { AdminConfirmDialog } from '../../components/admin/AdminConfirmDialog';
+import { AdminToast, ToastMessage } from '../../components/admin/AdminToast';
 
 export const AdminCategoriesManager: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>(db.getCategories());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+
+  // Dialog & Toast States
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setCategories(db.getCategories());
+    });
+    return unsub;
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ id: Date.now().toString(), type, message });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -45,11 +63,16 @@ export const AdminCategoriesManager: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, name: string) => {
-    if (confirm(`क्या आप श्रेणी "${name}" को हटाना चाहते हैं?`)) {
-      db.deleteCategory(id);
-      refresh();
-    }
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteTarget({ id, name });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    db.deleteCategory(deleteTarget.id);
+    showToast(`श्रेणी "${deleteTarget.name}" सफलतापूर्वक हटा दी गई।`, 'success');
+    setDeleteTarget(null);
+    refresh();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -67,6 +90,7 @@ export const AdminCategoriesManager: React.FC = () => {
         color: formData.color,
         order: Number(formData.order)
       });
+      showToast('श्रेणी सफलतापूर्वक अपडेट हुई!', 'success');
     } else {
       db.createCategory({
         name: formData.name,
@@ -76,6 +100,7 @@ export const AdminCategoriesManager: React.FC = () => {
         color: formData.color,
         order: Number(formData.order)
       });
+      showToast('नई श्रेणी सफलतापूर्वक जोड़ी गई!', 'success');
     }
 
     setIsModalOpen(false);
@@ -96,7 +121,7 @@ export const AdminCategoriesManager: React.FC = () => {
 
         <button
           onClick={handleOpenCreate}
-          className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center gap-1.5 self-start sm:self-auto"
+          className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center gap-1.5 self-start sm:self-auto cursor-pointer transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>नई श्रेणी बनाएं (Add Category)</span>
@@ -127,10 +152,18 @@ export const AdminCategoriesManager: React.FC = () => {
                 <td className="px-4 py-3.5 font-hindi font-semibold text-gray-800">{c.nameHindi}</td>
                 <td className="px-4 py-3.5 font-mono text-gray-500">/category/{c.slug}</td>
                 <td className="px-5 py-3.5 text-right space-x-1.5">
-                  <button onClick={() => handleOpenEdit(c)} className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700">
+                  <button 
+                    onClick={() => handleOpenEdit(c)} 
+                    className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700 hover:text-black transition-colors cursor-pointer"
+                    title="Edit Category"
+                  >
                     <Edit3 className="w-4 h-4" />
                   </button>
-                  <button onClick={() => handleDelete(c.id, c.name)} className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600">
+                  <button 
+                    onClick={() => handleDeleteClick(c.id, c.name)} 
+                    className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                    title="Delete Category"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
@@ -141,7 +174,7 @@ export const AdminCategoriesManager: React.FC = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-200 flex flex-col">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-base font-bold font-hindi text-gray-900">
@@ -213,13 +246,13 @@ export const AdminCategoriesManager: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white font-bold px-6 py-2 rounded-xl shadow"
+                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white font-bold px-6 py-2 rounded-xl shadow cursor-pointer"
                 >
                   Save Category
                 </button>
@@ -228,6 +261,21 @@ export const AdminCategoriesManager: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AdminConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="श्रेणी हटाएं (Delete Category)"
+        message={`क्या आप श्रेणी "${deleteTarget?.name}" को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।`}
+        confirmText="हाँ, हटाएं (Delete)"
+        cancelText="रद्द करें (Cancel)"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      {/* Toast Notification */}
+      <AdminToast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 };

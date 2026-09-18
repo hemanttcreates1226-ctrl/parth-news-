@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, Clock, Building } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, Clock, Building, UserCheck } from 'lucide-react';
 import { db } from '../../services/db';
 import { 
   FacebookIcon, 
@@ -67,34 +67,36 @@ export const ContactPage: React.FC = () => {
             </h3>
 
             <div className="space-y-4 text-xs text-gray-600">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#C8102E] shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 bg-red-50/70 p-3 rounded-2xl border border-red-100">
+                <UserCheck className="w-5 h-5 text-[#C8102E] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-gray-900 block font-bold text-sm">प्रयागराज प्रधान कार्यालय:</strong>
-                  <p className="font-hindi text-gray-600 mt-0.5">{settings.address}</p>
+                  <strong className="text-gray-900 block font-bold text-sm">चैनल हेड (Channel Head):</strong>
+                  <p className="font-hindi text-[#C8102E] font-bold text-base mt-0.5">{settings.channelHead || 'राजीव राय'}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-[#C8102E] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-gray-900 block font-bold text-sm">लखनऊ राज्य ब्यूरो:</strong>
-                  <p className="font-hindi text-gray-600 mt-0.5">{settings.headBureau}</p>
+                  <strong className="text-gray-900 block font-bold text-sm">मुख्यालय पता (Office Address):</strong>
+                  <p className="font-hindi text-gray-700 mt-0.5 leading-relaxed">{settings.address}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-emerald-600 shrink-0" />
                 <div>
-                  <strong className="text-gray-900 block font-bold text-sm">हेल्पलाइन / फोन:</strong>
-                  <span className="font-semibold text-gray-700">{settings.contactPhone}</span>
+                  <strong className="text-gray-900 block font-bold text-sm">मोबाइल नंबर (Mob):</strong>
+                  <a href={`tel:${settings.contactPhone}`} className="font-bold text-gray-900 hover:text-[#C8102E] text-sm transition-colors">
+                    {settings.contactPhone}
+                  </a>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-amber-600 shrink-0" />
                 <div>
-                  <strong className="text-gray-900 block font-bold text-sm">ईमेल पता:</strong>
+                  <strong className="text-gray-900 block font-bold text-sm">ईमेल पता (Email):</strong>
                   <span className="font-semibold text-gray-700">{settings.contactEmail}</span>
                 </div>
               </div>

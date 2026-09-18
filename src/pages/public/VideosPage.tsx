@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tv, Play, Search, Clock, Eye, Sparkles } from 'lucide-react';
 import { db } from '../../services/db';
 import { VideoNews } from '../../types';
@@ -10,9 +10,16 @@ interface VideosPageProps {
 }
 
 export const VideosPage: React.FC<VideosPageProps> = ({ onNavigate }) => {
-  const [videos] = useState<VideoNews[]>(db.getVideos());
+  const [videos, setVideos] = useState<VideoNews[]>(() => db.getVideos());
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeVideo, setActiveVideo] = useState<VideoNews | null>(null);
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setVideos(db.getVideos());
+    });
+    return unsub;
+  }, []);
 
   const categories = Array.from(new Set(videos.map(v => v.category)));
 

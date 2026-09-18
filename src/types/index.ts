@@ -167,6 +167,8 @@ export interface SiteSettings {
   };
   editorName?: string;
   editorDesignation?: string;
+  channelHead?: string;
+  channelHeadDesignation?: string;
   breakingNewsTickerEnabled?: boolean;
 }
 

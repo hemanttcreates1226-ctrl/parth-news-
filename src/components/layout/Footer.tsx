@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Mail, 
   Phone, 
   MapPin, 
   ShieldCheck, 
   UserPlus, 
-  ArrowRight
+  ArrowRight,
+  ChevronRight,
+  UserCheck
 } from 'lucide-react';
 import { ParthNewsLogo } from '../common/ParthNewsLogo';
 import { 
@@ -22,7 +24,14 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const settings = db.getSettings();
+  const [settings, setSettings] = useState(() => db.getSettings());
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setSettings(db.getSettings());
+    });
+    return unsub;
+  }, []);
 
   const handleNav = (path: string) => {
     onNavigate(path);
@@ -97,122 +106,191 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </div>
 
           {/* Col 2: News Sections */}
-          <div className="space-y-3">
-            <h3 className="text-gray-900 font-bold text-sm tracking-wider uppercase border-l-3 border-[#C8102E] pl-2.5">
-              News Categories (श्रेणियां)
-            </h3>
-            <ul className="grid grid-cols-2 gap-y-2.5 gap-x-3 text-xs text-gray-600 font-medium">
+          <div className="space-y-3.5">
+            <div className="flex items-center gap-2 border-l-4 border-[#C8102E] pl-3 py-0.5">
+              <h3 className="font-['Outfit',sans-serif] font-black text-sm tracking-wider uppercase text-gray-900">
+                News Categories
+              </h3>
+              <span className="font-['Mukta',sans-serif] font-bold text-xs text-[#C8102E] bg-red-50 border border-red-200/80 px-2 py-0.5 rounded tracking-normal">
+                श्रेणियां
+              </span>
+            </div>
+            <ul className="grid grid-cols-2 gap-y-2 gap-x-4 font-['Mukta',sans-serif] text-[14px] text-gray-700 font-semibold">
               <li>
-                <button onClick={() => handleNav('/category/uttar-pradesh')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> उत्तर प्रदेश
+                <button 
+                  onClick={() => handleNav('/category/uttar-pradesh')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">उत्तर प्रदेश</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/prayagraj')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> प्रयागराज
+                <button 
+                  onClick={() => handleNav('/category/prayagraj')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">प्रयागराज</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/india')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> देश / राष्ट्रीय
+                <button 
+                  onClick={() => handleNav('/category/india')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">देश / राष्ट्रीय</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/politics')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> राजनीति
+                <button 
+                  onClick={() => handleNav('/category/politics')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">राजनीति</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/crime')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> अपराध
+                <button 
+                  onClick={() => handleNav('/category/crime')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">अपराध</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/business')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> व्यापार
+                <button 
+                  onClick={() => handleNav('/category/business')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">व्यापार</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/sports')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> खेल
+                <button 
+                  onClick={() => handleNav('/category/sports')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">खेल</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/category/education')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group">
-                  <ArrowRight className="w-3 h-3 text-gray-400 group-hover:text-[#C8102E] transition-colors" /> शिक्षा व रोज़गार
+                <button 
+                  onClick={() => handleNav('/category/education')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform">शिक्षा व रोज़गार</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/articles')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group font-semibold text-gray-800">
-                  <ArrowRight className="w-3 h-3 text-[#C8102E]" /> संपादकीय लेख
+                <button 
+                  onClick={() => handleNav('/articles')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full text-gray-900 font-bold"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                    <span>संपादकीय लेख</span>
+                    <span className="text-[10px] font-bold text-[#C8102E] bg-red-50 border border-red-200/80 px-1 py-0.2 rounded leading-none">विचार</span>
+                  </span>
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('/videos')} className="hover:text-[#C8102E] transition-colors text-left flex items-center gap-1.5 group font-semibold text-red-600">
-                  <ArrowRight className="w-3 h-3 text-red-600" /> वीडियो बुलेटिन
+                <button 
+                  onClick={() => handleNav('/videos')} 
+                  className="hover:text-[#C8102E] transition-all text-left flex items-center gap-1.5 group py-1 cursor-pointer w-full text-[#C8102E] font-bold"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-[#C8102E] group-hover:translate-x-0.5 transition-all shrink-0" />
+                  <span className="group-hover:translate-x-0.5 transition-transform flex items-center gap-1.5">
+                    <span>वीडियो बुलेटिन</span>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8102E]"></span>
+                    </span>
+                  </span>
                 </button>
               </li>
             </ul>
           </div>
 
           {/* Col 3: Reporter Management & Verification */}
-          <div className="space-y-3">
-            <h3 className="text-gray-900 font-bold text-sm tracking-wider uppercase border-l-3 border-[#C8102E] pl-2.5">
-              Reporter Portal (संवाददाता सेवा)
-            </h3>
+          <div className="space-y-3.5">
+            <div className="flex items-center gap-2 border-l-4 border-[#C8102E] pl-3 py-0.5">
+              <h3 className="font-['Outfit',sans-serif] font-black text-sm tracking-wider uppercase text-gray-900">
+                Reporter Portal
+              </h3>
+              <span className="font-['Mukta',sans-serif] font-bold text-xs text-[#C8102E] bg-red-50 border border-red-200/80 px-2 py-0.5 rounded tracking-normal">
+                संवाददाता सेवा
+              </span>
+            </div>
             <div className="space-y-2 text-xs">
               <button
                 onClick={() => handleNav('/apply-reporter')}
-                className="w-full text-left bg-red-50 hover:bg-[#C8102E] hover:text-white text-[#C8102E] border border-red-200 p-2.5 rounded-xl transition-all flex items-center justify-between font-semibold group shadow-2xs"
+                className="w-full text-left bg-red-50/90 hover:bg-[#C8102E] hover:text-white text-[#C8102E] border border-red-200 p-2.5 rounded-xl transition-all flex items-center justify-between font-semibold group shadow-2xs cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-[#C8102E] group-hover:text-white" />
-                  <span>Become a Reporter (आवेदन करें)</span>
+                  <UserPlus className="w-4 h-4 text-[#C8102E] group-hover:text-white transition-colors" />
+                  <span className="font-['Mukta',sans-serif] text-[13.5px] font-bold">Become a Reporter (आवेदन करें)</span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
 
               <button
                 onClick={() => handleNav('/reporter-status')}
-                className="w-full text-left bg-gray-50 hover:bg-gray-100 text-gray-800 border border-gray-200 p-2.5 rounded-xl transition-colors flex items-center justify-between font-medium"
+                className="w-full text-left bg-gray-50 hover:bg-gray-100 text-gray-800 border border-gray-200 p-2.5 rounded-xl transition-colors flex items-center justify-between font-medium cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Check Application Status</span>
+                  <span className="font-['Mukta',sans-serif] text-[13px] font-semibold text-gray-800">Check Application Status (आवेदन स्थिति)</span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
               </button>
 
               <button
                 onClick={() => handleNav('/reporter-id')}
-                className="w-full text-left bg-gray-50 hover:bg-gray-100 text-gray-800 border border-gray-200 p-2.5 rounded-xl transition-colors flex items-center justify-between font-medium"
+                className="w-full text-left bg-gray-50 hover:bg-gray-100 text-gray-800 border border-gray-200 p-2.5 rounded-xl transition-colors flex items-center justify-between font-medium cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-amber-600" />
-                  <span>Download Digital ID Card PDF</span>
+                  <span className="font-['Mukta',sans-serif] text-[13px] font-semibold text-gray-800">Download Digital ID Card (प्रेस कार्ड)</span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
               </button>
             </div>
           </div>
 
-          {/* Col 4: Bureau Addresses */}
-          <div className="space-y-3">
-            <h3 className="text-gray-900 font-bold text-sm tracking-wider uppercase border-l-3 border-[#C8102E] pl-2.5">
-              Head Bureau & Contact
-            </h3>
-            <div className="text-xs text-gray-600 space-y-2">
+          {/* Col 4: Bureau Addresses & Contact */}
+          <div className="space-y-3.5">
+            <div className="flex items-center gap-2 border-l-4 border-[#C8102E] pl-3 py-0.5">
+              <h3 className="font-['Outfit',sans-serif] font-black text-sm tracking-wider uppercase text-gray-900">
+                Head Bureau & Contact
+              </h3>
+            </div>
+            <div className="text-xs text-gray-600 space-y-2.5">
+              <div className="flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-[#C8102E] shrink-0" />
+                <span className="font-['Mukta',sans-serif] text-[13.5px] font-semibold text-gray-900">
+                  चैनल हेड (Channel Head): <span className="text-[#C8102E] font-bold">{settings.channelHead || 'राजीव राय'}</span>
+                </span>
+              </div>
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-[#C8102E] shrink-0 mt-0.5" />
-                <span>{settings.address}</span>
+                <span className="font-['Mukta',sans-serif] text-[13px] leading-snug text-gray-700">{settings.address}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-gray-500 shrink-0" />
-                <span className="font-medium text-gray-800">{settings.contactPhone}</span>
+                <a href={`tel:${settings.contactPhone}`} className="font-['Outfit',sans-serif] font-bold text-gray-800 hover:text-[#C8102E] transition-colors">
+                  Mob: {settings.contactPhone}
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-gray-500 shrink-0" />
-                <span className="font-medium text-gray-800">{settings.contactEmail}</span>
+                <span className="font-['Outfit',sans-serif] font-medium text-gray-800">{settings.contactEmail}</span>
               </div>
             </div>
           </div>
@@ -220,22 +298,22 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Bottom Bar: Legal, Quick Links & Copyright */}
         <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 font-medium">
-            <button onClick={() => handleNav('/about')} className="hover:text-[#C8102E] transition-colors">About Us</button>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 font-['Outfit',sans-serif] font-medium tracking-wide">
+            <button onClick={() => handleNav('/about')} className="hover:text-[#C8102E] transition-colors cursor-pointer">About Us</button>
             <span>•</span>
-            <button onClick={() => handleNav('/contact')} className="hover:text-[#C8102E] transition-colors">Contact</button>
+            <button onClick={() => handleNav('/contact')} className="hover:text-[#C8102E] transition-colors cursor-pointer">Contact</button>
             <span>•</span>
-            <button onClick={() => handleNav('/advertise')} className="hover:text-[#C8102E] transition-colors">Advertise With Us</button>
+            <button onClick={() => handleNav('/advertise')} className="hover:text-[#C8102E] transition-colors cursor-pointer">Advertise With Us</button>
             <span>•</span>
-            <button onClick={() => handleNav('/privacy-policy')} className="hover:text-[#C8102E] transition-colors">Privacy Policy</button>
+            <button onClick={() => handleNav('/privacy-policy')} className="hover:text-[#C8102E] transition-colors cursor-pointer">Privacy Policy</button>
             <span>•</span>
-            <button onClick={() => handleNav('/terms')} className="hover:text-[#C8102E] transition-colors">Terms of Service</button>
+            <button onClick={() => handleNav('/terms')} className="hover:text-[#C8102E] transition-colors cursor-pointer">Terms of Service</button>
             <span>•</span>
-            <button onClick={() => handleNav('/disclaimer')} className="hover:text-[#C8102E] transition-colors">Disclaimer</button>
+            <button onClick={() => handleNav('/disclaimer')} className="hover:text-[#C8102E] transition-colors cursor-pointer">Disclaimer</button>
           </div>
 
-          <div className="text-center md:text-right text-gray-500 text-[11px]">
-            © 2026 <strong className="text-gray-900 font-bold">PARTH NEWS</strong>. All Rights Reserved. सच के साथ, एक कदम आगे।
+          <div className="text-center md:text-right text-gray-500 text-[11px] font-['Mukta',sans-serif]">
+            © 2026 <strong className="text-gray-900 font-bold font-['Outfit',sans-serif]">PARTH NEWS</strong>. All Rights Reserved. <span className="text-gray-700 font-semibold">सच के साथ, एक कदम आगे।</span>
           </div>
         </div>
       </div>

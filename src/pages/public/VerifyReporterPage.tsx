@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { db } from '../../services/db';
 import { ParthNewsLogo } from '../../components/common/ParthNewsLogo';
+import { Reporter } from '../../types';
 
 interface VerifyReporterPageProps {
   reporterId: string;
@@ -21,8 +22,16 @@ interface VerifyReporterPageProps {
 
 export const VerifyReporterPage: React.FC<VerifyReporterPageProps> = ({ reporterId, onNavigate }) => {
   const normalized = reporterId.trim().toUpperCase();
-  const reporter = db.getReporterById(normalized);
-  const settings = db.getSettings();
+  const [reporter, setReporter] = useState<Reporter | undefined>(() => db.getReporterById(normalized));
+  const [settings, setSettings] = useState(() => db.getSettings());
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setReporter(db.getReporterById(normalized));
+      setSettings(db.getSettings());
+    });
+    return unsub;
+  }, [normalized]);
 
   const isActive = reporter && reporter.status === 'active';
 

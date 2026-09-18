@@ -1,4 +1,4 @@
-import { Post, VideoNews, Category, ReporterApplication, Reporter, IdCardRecord, ContactMessage, AdvertisementEnquiry, SiteSettings } from '../types';
+import { Post, VideoNews, Category, ReporterApplication, Reporter, IdCardRecord, ContactMessage, AdvertisementEnquiry, SiteSettings } from '../types/index';
 
 export const INITIAL_CATEGORIES: Category[] = [
   { id: 'cat-1', name: 'Uttar Pradesh', nameHindi: 'उत्तर प्रदेश', slug: 'uttar-pradesh', description: 'उत्तर प्रदेश की प्रमुख एवं ताज़ा खबरें', order: 1, color: '#C8102E' },
@@ -393,7 +393,7 @@ export const INITIAL_REPORTER_APPLICATIONS: ReporterApplication[] = [
     fatherName: 'श्री के. सी. गुप्ता',
     dob: '2001-04-10',
     mobile: '+91 99887 76655',
-    email: 'rahul.gupta.sample@gmail.com',
+    email: 'rahul.gupta@gmail.com',
     address: 'चौक, वाराणसी',
     city: 'Varanasi',
     district: 'Varanasi',
@@ -508,13 +508,15 @@ export const INITIAL_SETTINGS: SiteSettings = {
   tagline: 'सच के साथ, एक कदम आगे',
   taglineHindi: 'सच के साथ, एक कदम आगे',
   contactEmail: 'editor@parthnews.in',
-  contactPhone: '+91 98390 00000',
-  whatsappNumber: '+91 98390 00000',
-  address: 'पार्थ न्यूज़ भवन, 12-B/4 कस्तूरबा गांधी मार्ग, सिविल लाइन्स, प्रयागराज (उ.प्र.) 211001',
-  headBureau: 'लखनऊ ब्यूरो: 402, विधान सभा मार्ग, हजरतगंज, लखनऊ (उ.प्र.)',
-  prayagrajBureau: 'प्रयागराज मुख्यालय: 12-B/4 सिविल लाइन्स, प्रयागराज',
+  contactPhone: '+91 9981065457',
+  whatsappNumber: '+91 9981065457',
+  address: 'अखाई मार्केट, अदालत के सामने मुंगावली जिला अशोकनगर मध्यप्रदेश',
+  headBureau: 'मुख्यालय ब्यूरो: अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)',
+  prayagrajBureau: 'अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)',
+  channelHead: 'राजीव राय',
+  channelHeadDesignation: 'चैनल हेड (Channel Head)',
   breakingNewsEnabled: true,
-  breakingNewsText: '🔴 महाकुंभ 2026: प्रयागराज संगम क्षेत्र में हाई-टेक यात्री सुविधाओं का विस्तार • इलाहाबाद हाईकोर्ट का जनसमस्याओं पर त्वरित निस्तारण का कड़ा निर्देश • यूपी पुलिस साइबर सेल ने 18 करोड़ की ठगी का किया भंडाफोड़',
+  breakingNewsText: '🔴 पार्थ न्यूज़: सच के साथ, एक कदम आगे • निष्पक्ष, निर्भीक और जनसरोकारी डिजिटल पत्रकारिता',
   socialLinks: {
     facebook: 'https://facebook.com/ParthNewsOfficial',
     twitter: 'https://x.com/ParthNewsLive',
@@ -522,6 +524,6 @@ export const INITIAL_SETTINGS: SiteSettings = {
     instagram: 'https://instagram.com/ParthNewsOfficial',
     telegram: 'https://t.me/ParthNewsAlerts'
   },
-  editorName: 'हेमंत कुमार (Chief Editor & Director)',
-  editorDesignation: 'प्रधान संपादक एवं महानिदेशक'
+  editorName: 'राजीव राय (Channel Head)',
+  editorDesignation: 'चैनल हेड (Channel Head)'
 };

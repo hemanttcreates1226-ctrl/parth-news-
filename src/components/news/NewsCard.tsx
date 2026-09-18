@@ -1,6 +1,8 @@
-import React from 'react';
-import { Clock, User, Share2, Eye, Flame, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, User, Share2, Eye, Flame, ArrowRight, Check } from 'lucide-react';
 import { Post } from '../../types';
+import { sharePostToWhatsApp, getPostShortUrl } from '../../utils/shareUtils';
+import { WhatsAppIcon } from '../common/SocialIcons';
 
 interface NewsCardProps {
   post: Post;
@@ -9,6 +11,8 @@ interface NewsCardProps {
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'standard' }) => {
+  const [copied, setCopied] = useState(false);
+
   const formatDate = (isoString: string) => {
     if (!isoString) return '';
     try {
@@ -23,17 +27,24 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
     }
   };
 
-  const handleShare = (e: React.MouseEvent) => {
+  const handleWhatsAppShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    await sharePostToWhatsApp(post);
+  };
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shortUrl = getPostShortUrl(post);
     if (navigator.share) {
       navigator.share({
         title: post.titleHindi || post.title,
-        text: post.description,
-        url: window.location.origin + `/news/${post.slug}`
+        text: `*${post.titleHindi || post.title}*\n\nपार्थ न्यूज़:\n${shortUrl}`,
+        url: shortUrl
       }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(window.location.origin + `/news/${post.slug}`);
-      alert('Link copied to clipboard!');
+      await navigator.clipboard.writeText(shortUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -119,13 +130,22 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
                 <Clock className="w-3.5 h-3.5" /> {formatDate(post.publishedAt || post.createdAt)}
               </span>
             </div>
-            <button 
-              onClick={handleShare}
-              className="p-1.5 text-gray-400 hover:text-[#C8102E] hover:bg-red-50 rounded-full transition-colors"
-              title="Share Story"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button 
+                onClick={handleWhatsAppShare}
+                className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full transition-colors"
+                title="WhatsApp पर शेयर करें"
+              >
+                <WhatsAppIcon size={16} />
+              </button>
+              <button 
+                onClick={handleShare}
+                className="p-1.5 text-gray-400 hover:text-[#C8102E] hover:bg-red-50 rounded-full transition-colors"
+                title="लिंक कॉपी / शेयर करें"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+              </button>
+            </div>
           </div>
         </div>
       </article>
@@ -142,7 +162,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
       <div className="relative h-48 w-full overflow-hidden bg-gray-100">
         <img 
           src={post.featuredImage} 
-          alt={post.title}
+          alt={post.title} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
           loading="lazy"
         />
@@ -151,11 +171,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
           <span className="bg-[#C8102E] text-white text-[11px] font-black px-2 py-0.5 rounded shadow-sm tracking-wider uppercase">
             {post.category}
           </span>
-          {post.breaking && (
-            <span className="bg-red-950/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-red-500/50 flex items-center gap-1 animate-pulse">
-              <Flame className="w-2.5 h-2.5 fill-red-400 text-red-400" /> LIVE
-            </span>
-          )}
         </div>
       </div>
 
@@ -179,15 +194,23 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
             <span>{formatDate(post.publishedAt || post.createdAt)}</span>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="flex items-center gap-0.5 text-gray-400">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="flex items-center gap-0.5 text-gray-400 text-[10px] mr-1">
               <Eye className="w-3 h-3" /> {post.views}
             </span>
             <button 
+              onClick={handleWhatsAppShare}
+              className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded transition-colors"
+              title="WhatsApp पर शेयर करें"
+            >
+              <WhatsAppIcon size={15} />
+            </button>
+            <button 
               onClick={handleShare}
               className="p-1 hover:text-[#C8102E] rounded transition-colors"
+              title={copied ? "कॉपी हो गया!" : "शेयर करें"}
             >
-              <Share2 className="w-3.5 h-3.5" />
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>

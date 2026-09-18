@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit3, Trash2, FileText, X } from 'lucide-react';
 import { db } from '../../services/db';
 import { Post, Category } from '../../types';
+import { AdminConfirmDialog } from '../../components/admin/AdminConfirmDialog';
+import { AdminToast, ToastMessage } from '../../components/admin/AdminToast';
 
 export const AdminArticlesManager: React.FC = () => {
   const [articles, setArticles] = useState<Post[]>(db.getArticles());
@@ -10,6 +12,22 @@ export const AdminArticlesManager: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<Post | null>(null);
+
+  // Dialog & Toast States
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setArticles(db.getArticles());
+    });
+    return unsub;
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ id: Date.now().toString(), type, message });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   const [formData, setFormData] = useState({
     title: '',
@@ -59,11 +77,16 @@ export const AdminArticlesManager: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (confirm(`क्या आप इस आलेख "${title}" को हटाना चाहते हैं?`)) {
-      db.deleteArticle(id);
-      refreshList();
-    }
+  const handleDeleteClick = (id: string, title: string) => {
+    setDeleteTarget({ id, title });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    db.deleteArticle(deleteTarget.id);
+    showToast(`आलेख "${deleteTarget.title}" सफलतापूर्वक हटा दिया गया।`, 'success');
+    setDeleteTarget(null);
+    refreshList();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,6 +106,7 @@ export const AdminArticlesManager: React.FC = () => {
         featuredImage: formData.featuredImage,
         status: formData.status
       });
+      showToast('संपादकीय आलेख सफलतापूर्वक अपडेट हुआ!', 'success');
     } else {
       db.createArticle({
         title: formData.title || formData.titleHindi,
@@ -99,6 +123,7 @@ export const AdminArticlesManager: React.FC = () => {
         featured: false,
         breaking: false
       });
+      showToast('नया आलेख सफलतापूर्वक प्रकाशित हुआ!', 'success');
     }
 
     setIsModalOpen(false);
@@ -126,7 +151,7 @@ export const AdminArticlesManager: React.FC = () => {
 
         <button
           onClick={handleOpenCreate}
-          className="bg-neutral-900 hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center gap-1.5 self-start sm:self-auto"
+          className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 self-start sm:self-auto cursor-pointer transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span>नया आलेख जोड़ें (Write Article)</span>
@@ -182,13 +207,15 @@ export const AdminArticlesManager: React.FC = () => {
                 <td className="px-5 py-3.5 text-right space-x-1.5">
                   <button
                     onClick={() => handleOpenEdit(art)}
-                    className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700"
+                    className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-700 hover:text-black transition-colors cursor-pointer"
+                    title="Edit Article"
                   >
                     <Edit3 className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(art.id, art.titleHindi || art.title)}
-                    className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600"
+                    onClick={() => handleDeleteClick(art.id, art.titleHindi || art.title)}
+                    className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                    title="Delete Article"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -201,7 +228,7 @@ export const AdminArticlesManager: React.FC = () => {
 
       {/* Article Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200 flex flex-col max-h-[90vh]">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-base font-bold font-hindi text-gray-900">
@@ -261,13 +288,13 @@ export const AdminArticlesManager: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-neutral-900 hover:bg-black text-white font-bold px-6 py-2 rounded-xl shadow"
+                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white font-bold px-6 py-2 rounded-xl shadow cursor-pointer transition-colors"
                 >
                   Save Article
                 </button>
@@ -276,6 +303,21 @@ export const AdminArticlesManager: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AdminConfirmDialog
+        isOpen={deleteTarget !== null}
+        title="आलेख हटाएं (Delete Article)"
+        message={`क्या आप इस आलेख "${deleteTarget?.title}" को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।`}
+        confirmText="हाँ, हटाएं (Delete)"
+        cancelText="रद्द करें (Cancel)"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      {/* Toast Notification */}
+      <AdminToast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 };

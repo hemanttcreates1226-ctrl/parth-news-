@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import QRCode from 'qrcode';
-import { QrCode as QrIcon } from 'lucide-react';
+import React from 'react';
 import { Reporter, IdCardRecord } from '../../types';
 import { ParthNewsLogo } from '../common/ParthNewsLogo';
 
@@ -17,28 +15,7 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
   showBack = false,
   className = ''
 }) => {
-  const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const reporterName = 'name' in reporter ? reporter.name : reporter.reporterName;
-
-  useEffect(() => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://parthnews.in';
-    const verifyUrl = `${origin}/verify-reporter/${reporter.reporterId}`;
-    
-    QRCode.toDataURL(verifyUrl, {
-      width: 180,
-      margin: 1,
-      color: {
-        dark: '#111111',
-        light: '#FFFFFF'
-      }
-    }).then(url => {
-      setQrDataUrl(url);
-    }).catch(err => {
-      console.error('QR generation error:', err);
-    });
-  }, [reporter.reporterId]);
-
-  const isActive = reporter.status === 'active';
 
   return (
     <div 
@@ -76,12 +53,6 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
           >
             OFFICIAL PRESS IDENTITY CARD
           </div>
-          <div 
-            className="text-[9px] font-hindi font-semibold relative z-10"
-            style={{ color: '#FDE68A' }}
-          >
-            सूचना एवं प्रसारण डिजिटल मीडिया पहचान पत्र
-          </div>
         </div>
 
         {/* Identity Body */}
@@ -99,7 +70,7 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
             </div>
           </div>
 
-          {/* Photo with Official Red Frame & Security Stamp */}
+          {/* Photo with Official Red Frame */}
           <div className="relative mt-1">
             <div 
               className="w-28 h-32 rounded-lg overflow-hidden p-0.5"
@@ -115,19 +86,6 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
                 className="w-full h-full object-cover rounded"
                 crossOrigin="anonymous"
               />
-            </div>
-            
-            {/* Status Stamp */}
-            <div 
-              className="absolute -bottom-2 -right-2 text-[9px] font-black uppercase px-2 py-0.5 rounded-full"
-              style={{
-                backgroundColor: isActive ? '#059669' : '#B91C1C',
-                color: '#FFFFFF',
-                border: '1px solid #FFFFFF',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-              }}
-            >
-              {isActive ? '✓ VERIFIED' : 'INACTIVE'}
             </div>
           </div>
 
@@ -193,38 +151,12 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
             </div>
           </div>
 
-          {/* Bottom QR Code & Authorized Seal */}
+          {/* Bottom Authorized Seal */}
           <div 
-            className="w-full flex items-center justify-between mt-2 pt-2"
+            className="w-full flex items-center justify-end mt-2 pt-2"
             style={{ borderTop: '1px solid #E5E7EB' }}
           >
-            {/* QR Code */}
-            <div className="flex items-center gap-1.5 text-left">
-              {qrDataUrl ? (
-                <img 
-                  src={qrDataUrl} 
-                  alt="Verification QR" 
-                  className="w-12 h-12 rounded p-0.5"
-                  style={{
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #D1D5DB'
-                  }}
-                />
-              ) : (
-                <div 
-                  className="w-12 h-12 rounded flex items-center justify-center"
-                  style={{ backgroundColor: '#F3F4F6', border: '1px solid #D1D5DB' }}
-                >
-                  <QrIcon className="w-6 h-6" style={{ color: '#9CA3AF' }} />
-                </div>
-              )}
-              <div className="text-[9px] leading-tight" style={{ color: '#6B7280' }}>
-                <span className="font-bold block" style={{ color: '#374151' }}>Scan to Verify</span>
-                <span>parthnews.in</span>
-              </div>
-            </div>
-
-            {/* Chief Editor Signature / Stamp */}
+            {/* Channel Head Signature / Stamp */}
             <div className="text-right">
               <div 
                 className="font-serif italic text-xs font-bold pb-0.5 px-2"
@@ -233,30 +165,16 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
                   borderBottom: '1px solid #A3A3A3'
                 }}
               >
-                Hemant Kumar
+                Rajiv Rai
               </div>
               <span 
                 className="text-[9px] font-bold uppercase block mt-0.5"
                 style={{ color: '#C8102E' }}
               >
-                Chief Editor / निदेशक
+                Channel Head / चैनल हेड
               </span>
             </div>
           </div>
-        </div>
-
-        {/* Card Footer Stripe */}
-        <div 
-          className="text-[9px] py-1.5 px-3 flex justify-between items-center"
-          style={{
-            backgroundColor: '#171717',
-            color: '#FFFFFF'
-          }}
-        >
-          <span className="font-hindi font-semibold" style={{ color: '#FCA5A5' }}>
-            सच के साथ, एक कदम आगे
-          </span>
-          <span className="font-mono" style={{ color: '#9CA3AF' }}>PARTH-PRESS-SECURED</span>
         </div>
       </div>
 
@@ -314,20 +232,13 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
             }}
           >
             <div>
-              <strong className="block" style={{ color: '#111827' }}>Head Bureau (प्रयागराज मुख्यालय):</strong>
-              <p style={{ color: '#4B5563' }}>12-B/4 कस्तूरबा गांधी मार्ग, सिविल लाइन्स, प्रयागराज (उ.प्र.) 211001</p>
+              <strong className="block" style={{ color: '#111827' }}>Head Bureau (मुख्यालय):</strong>
+              <p style={{ color: '#4B5563' }}>अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)</p>
             </div>
             <div className="flex justify-between items-center" style={{ color: '#4B5563' }}>
-              <span>Helpline: +91 98390 00000</span>
+              <span>Helpline: +91 9981065457</span>
               <span>editor@parthnews.in</span>
             </div>
-          </div>
-
-          <div 
-            className="text-center text-[9px] font-mono pt-1"
-            style={{ color: '#9CA3AF' }}
-          >
-            VERIFICATION URL: https://parthnews.in/verify-reporter/{reporter.reporterId}
           </div>
         </div>
       )}

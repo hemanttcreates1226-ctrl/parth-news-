@@ -144,7 +144,28 @@ function MainApp() {
       return <HomePage onNavigate={navigate} />;
     }
 
-    // 2. News Detail: /news/:slug
+    // 2. Short and Simple Post URL: /p/:idOrSlug (e.g. /p/1, /p/2, /p/post-1)
+    if (pathname.startsWith('/p/')) {
+      const code = decodeURIComponent(pathname.replace('/p/', '').split('/')[0].split('?')[0]);
+      const post = db.getPosts().find(p => 
+        p.id === code || 
+        p.id === `post-${code}` || 
+        p.id.replace(/^post-/, '') === code ||
+        p.slug === code
+      ) || db.getArticles().find(a => 
+        a.id === code || 
+        a.id === `art-${code}` || 
+        a.id.replace(/^art-/, '') === code ||
+        a.slug === code
+      );
+
+      if (post) {
+        return <ArticlePage slug={post.slug} isEditorial={post.category === 'Editorial' || post.categorySlug === 'articles'} onNavigate={navigate} />;
+      }
+      return <ArticlePage slug={code} isEditorial={false} onNavigate={navigate} />;
+    }
+
+    // 3. News Detail: /news/:slug
     if (pathname.startsWith('/news/')) {
       const slug = pathname.replace('/news/', '');
       return <ArticlePage slug={slug} isEditorial={false} onNavigate={navigate} />;

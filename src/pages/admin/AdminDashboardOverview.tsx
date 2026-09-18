@@ -75,9 +75,9 @@ export const AdminDashboardOverview: React.FC<AdminDashboardOverviewProps> = ({
           </button>
           <button
             onClick={onOpenCreateVideo}
-            className="bg-neutral-900 hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 transition-colors"
+            className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xs flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Tv className="w-4 h-4" />
+            <Tv className="w-4 h-4 text-[#C8102E]" />
             <span>Add Video</span>
           </button>
         </div>

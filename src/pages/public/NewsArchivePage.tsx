@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Filter, Grid, List, Search, ArrowRight, ChevronRight } from 'lucide-react';
 import { db } from '../../services/db';
 import { Post, Category } from '../../types';
@@ -18,9 +18,18 @@ export const NewsArchivePage: React.FC<NewsArchivePageProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug || 'all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [allPosts, setAllPosts] = useState<Post[]>(() => 
+    isEditorialSection ? db.getPublishedArticles() : db.getPublishedPosts()
+  );
+  const [categories, setCategories] = useState<Category[]>(() => db.getCategories());
 
-  const allPosts = isEditorialSection ? db.getPublishedArticles() : db.getPublishedPosts();
-  const categories = db.getCategories();
+  useEffect(() => {
+    const unsub = db.subscribe(() => {
+      setAllPosts(isEditorialSection ? db.getPublishedArticles() : db.getPublishedPosts());
+      setCategories(db.getCategories());
+    });
+    return unsub;
+  }, [isEditorialSection]);
 
   const currentCategoryObj = categories.find(c => c.slug === categorySlug);
 

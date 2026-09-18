@@ -9,7 +9,6 @@ import {
   ChevronRight, 
   Flame, 
   Tag, 
-  Check, 
   Send,
   Bookmark,
   Printer,
@@ -24,6 +23,11 @@ import {
   WhatsAppIcon, 
   TelegramIcon 
 } from '../../components/common/SocialIcons';
+import { SEOHead } from '../../components/common/SEOHead';
+import { 
+  getPostShortUrl, 
+  sharePostToWhatsApp 
+} from '../../utils/shareUtils';
 
 interface ArticlePageProps {
   slug: string;
@@ -32,10 +36,14 @@ interface ArticlePageProps {
 }
 
 export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = false, onNavigate }) => {
-  const [post, setPost] = useState<Post | undefined>(() => 
-    isEditorial ? db.getArticleBySlug(slug) : db.getPostBySlug(slug)
-  );
-  const [copied, setCopied] = useState(false);
+  const [post, setPost] = useState<Post | undefined>(() => {
+    let found = isEditorial ? db.getArticleBySlug(slug) : db.getPostBySlug(slug);
+    if (!found) {
+      found = db.getPosts().find(p => p.id === slug || p.id === `post-${slug}` || p.id.replace(/^post-/, '') === slug || p.slug === slug) ||
+              db.getArticles().find(a => a.id === slug || a.id === `art-${slug}` || a.id.replace(/^art-/, '') === slug || a.slug === slug);
+    }
+    return found;
+  });
   const [commentText, setCommentText] = useState('');
   const [commentAuthor, setCommentAuthor] = useState('');
   const [comments, setComments] = useState<{ author: string; text: string; time: string }[]>([
@@ -43,12 +51,22 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
   ]);
 
   useEffect(() => {
-    const found = isEditorial ? db.getArticleBySlug(slug) : db.getPostBySlug(slug);
+    let found = isEditorial ? db.getArticleBySlug(slug) : db.getPostBySlug(slug);
+    if (!found) {
+      found = db.getPosts().find(p => p.id === slug || p.id === `post-${slug}` || p.id.replace(/^post-/, '') === slug || p.slug === slug) ||
+              db.getArticles().find(a => a.id === slug || a.id === `art-${slug}` || a.id.replace(/^art-/, '') === slug || a.slug === slug);
+    }
     setPost(found);
     if (found) {
       db.incrementPostViews(found.id);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    const unsub = db.subscribe(() => {
+      const updated = isEditorial ? db.getArticleBySlug(slug) : db.getPostBySlug(slug);
+      if (updated) setPost(updated);
+    });
+    return unsub;
   }, [slug, isEditorial]);
 
   if (!post) {
@@ -74,18 +92,21 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
     .filter(p => p.id !== post.id)
     .slice(0, 4);
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://parthnews.in/news/${post.slug}`;
+  const [sharingWhatsApp, setSharingWhatsApp] = useState(false);
+  const shortUrl = getPostShortUrl(post);
+  const currentUrl = shortUrl;
   const shareTitle = post.titleHindi || post.title;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(currentUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
-
-  const handleShareWhatsApp = () => {
-    const text = encodeURIComponent(`${shareTitle}\n\nपार्थ न्यूज़ (सच के साथ, एक कदम आगे) पर पढ़ें:\n${currentUrl}`);
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  const handleShareWhatsApp = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setSharingWhatsApp(true);
+    try {
+      await sharePostToWhatsApp(post);
+    } finally {
+      setTimeout(() => {
+        setSharingWhatsApp(false);
+      }, 1500);
+    }
   };
 
   const handleShareFacebook = () => {
@@ -125,6 +146,9 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Dynamic SEO and Social Meta tags for WhatsApp crawler & previews */}
+      <SEOHead post={post} />
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-gray-500 mb-4 font-medium overflow-x-auto whitespace-nowrap">
         <button onClick={() => onNavigate('/')} className="hover:text-[#C8102E]">होम (Home)</button>
@@ -205,11 +229,11 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={handleShareWhatsApp}
-                  className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
-                  title="Share on WhatsApp"
+                  className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+                  title="WhatsApp पर फोटो थंबनेल और लिंक शेयर करें"
                 >
                   <WhatsAppIcon size={18} />
-                  <span>WhatsApp</span>
+                  <span>{sharingWhatsApp ? 'WhatsApp खुल रहा है...' : 'WhatsApp शेयर'}</span>
                 </button>
                 <button
                   onClick={handleShareFacebook}
@@ -237,13 +261,6 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
                 >
                   <TelegramIcon size={18} />
                   <span>Telegram</span>
-                </button>
-                <button
-                  onClick={handleCopyLink}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Copied!' : 'Copy Link'}</span>
                 </button>
               </div>
             </div>
