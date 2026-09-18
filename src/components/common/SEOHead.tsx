@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Post } from '../../types';
-import { getPostShortUrl } from '../../utils/shareUtils';
+import { getPostShortUrl, getPostPublicOrigin } from '../../utils/shareUtils';
 
 interface SEOHeadProps {
   post: Post;
@@ -16,8 +16,14 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
 
     const title = post.titleHindi || post.title;
     const desc = post.description || post.title;
-    const imageUrl = post.featuredImage;
     const shortUrl = getPostShortUrl(post);
+    const origin = getPostPublicOrigin();
+
+    // Ensure image is fully-qualified absolute URL for WhatsApp / social crawlers
+    const rawImage = post.featuredImage || '';
+    const imageUrl = rawImage.startsWith('http')
+      ? rawImage
+      : (rawImage ? `${origin}${rawImage.startsWith('/') ? '' : '/'}${rawImage}` : '');
 
     // Update document title
     document.title = `${title} | पार्थ न्यूज़`;

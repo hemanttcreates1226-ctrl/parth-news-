@@ -505,6 +505,7 @@ export const INITIAL_AD_ENQUIRIES: AdvertisementEnquiry[] = [
 
 export const INITIAL_SETTINGS: SiteSettings = {
   siteName: 'PARTH NEWS',
+  siteUrl: 'https://parthnews.in',
   tagline: 'सच के साथ, एक कदम आगे',
   taglineHindi: 'सच के साथ, एक कदम आगे',
   contactEmail: 'editor@parthnews.in',

@@ -17,16 +17,43 @@ export function getPostShortCode(post: { id: string; slug?: string }): string {
 
 /**
  * Determines the public origin for sharing links.
- * Avoids sharing unreachable localhost/private addresses.
+ * Avoids sharing unreachable localhost or private development preview addresses (e.g. ais-dev)
+ * which external crawlers like WhatsApp or Facebook cannot access due to auth cookies.
  */
 export function getPostPublicOrigin(customOrigin?: string): string {
   if (customOrigin) return customOrigin;
-  if (typeof window === 'undefined') return 'https://parthnews.in';
-  const { origin, hostname } = window.location;
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
-    return 'https://parthnews.in';
+  
+  if (typeof window !== 'undefined') {
+    // Check if user set a custom live domain in site settings
+    try {
+      const storedSettings = localStorage.getItem('parth_news_settings');
+      if (storedSettings) {
+        const parsed = JSON.parse(storedSettings);
+        if (parsed.siteUrl && parsed.siteUrl.startsWith('http')) {
+          return parsed.siteUrl.replace(/\/$/, '');
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    const { origin, hostname } = window.location;
+    // When running inside AI Studio development environment or localhost,
+    // external web crawlers (WhatsApp scraper) are blocked by Google's cookie wall.
+    // Use the official public domain so WhatsApp links are crawlable and previewable.
+    if (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '0.0.0.0' ||
+      hostname.includes('ais-dev-') ||
+      hostname.includes('.run.app')
+    ) {
+      return 'https://parthnews.in';
+    }
+    return origin;
   }
-  return origin;
+
+  return 'https://parthnews.in';
 }
 
 /**
@@ -48,10 +75,162 @@ export function getPostFullUrl(post: { id: string; slug?: string }, customOrigin
 }
 
 /**
+ * Robustly converts an image URL (remote, base64 data-URL, or local path) into a Blob.
+ */
+export async function getPostImageBlob(imageUrl: string): Promise<Blob | null> {
+  if (!imageUrl) return null;
+
+  // 1. If base64 data URL
+  if (imageUrl.startsWith('data:image/')) {
+    try {
+      const parts = imageUrl.split(',');
+      const mimeMatch = parts[0].match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
+    } catch (e) {
+      console.warn('Error decoding base64 image', e);
+    }
+  }
+
+  // 2. Direct fetch with CORS
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+    const res = await fetch(imageUrl, { mode: 'cors', signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      return await res.blob();
+    }
+  } catch {
+    // CORS or fetch error, proceed to canvas method
+  }
+
+  // 3. Fallback: load image via HTMLImageElement and render to canvas
+  try {
+    const blob = await new Promise<Blob | null>((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth || img.width || 800;
+          canvas.height = img.naturalHeight || img.height || 450;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return resolve(null);
+          ctx.drawImage(img, 0, 0);
+          canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.92);
+        } catch {
+          resolve(null);
+        }
+      };
+      img.onerror = () => resolve(null);
+      img.src = imageUrl;
+    });
+    if (blob) return blob;
+  } catch {
+    // fallback
+  }
+
+  return null;
+}
+
+/**
+ * Creates a standard File object for the post's featured thumbnail image.
+ */
+export async function getPostImageFile(post: Post): Promise<File | null> {
+  if (!post || !post.featuredImage) return null;
+  try {
+    const blob = await getPostImageBlob(post.featuredImage);
+    if (!blob) return null;
+    const isPng = blob.type.includes('png');
+    const filename = `parth-news-${post.id || 'article'}.${isPng ? 'png' : 'jpg'}`;
+    return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Copies the post's thumbnail photo to the system clipboard.
+ * Allows users on desktop to easily paste (Ctrl+V) directly into WhatsApp Web.
+ */
+export async function copyPostImageToClipboard(post: Post): Promise<boolean> {
+  if (!post.featuredImage || typeof navigator === 'undefined' || !navigator.clipboard) {
+    return false;
+  }
+  try {
+    const blob = await getPostImageBlob(post.featuredImage);
+    if (!blob || !window.ClipboardItem) return false;
+
+    // Browser Clipboard API requires image/png
+    let pngBlob = blob;
+    if (!blob.type.includes('png')) {
+      pngBlob = await new Promise<Blob>((resolve) => {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob((b) => resolve(b || blob), 'image/png');
+          } else {
+            resolve(blob);
+          }
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve(blob);
+        };
+        img.src = url;
+      });
+    }
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ 'image/png': pngBlob })
+    ]);
+    return true;
+  } catch (e) {
+    console.warn('Could not copy image to clipboard:', e);
+    return false;
+  }
+}
+
+/**
+ * Triggers a download of the post's thumbnail image.
+ */
+export async function downloadPostImage(post: Post): Promise<boolean> {
+  try {
+    const blob = await getPostImageBlob(post.featuredImage);
+    if (!blob) return false;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `parth-news-${post.id || 'post'}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 200);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Formats a clean WhatsApp share message with headline, summary,
  * and the clean news link.
- * Note: The thumbnail image URL is NOT included in the text to avoid raw link exposure.
- * Instead, WhatsApp generates the thumbnail preview card directly from the article's link!
  */
 export function formatWhatsAppShareText(post: Post, customOrigin?: string): string {
   const headline = post.titleHindi || post.title;
@@ -105,45 +284,54 @@ export function openDirectWhatsApp(post: Post, customOrigin?: string): void {
 
 /**
  * Shares a post to WhatsApp.
- * - On mobile (Android/iOS), if Web Share with file is supported, it attaches the
- *   actual image file directly so WhatsApp sends a full photo with the caption!
- * - On desktop or browsers without file sharing, it opens WhatsApp directly
- *   with the formatted headline and clean article short URL (no raw image link in text).
+ * - If native file sharing is supported (Android, iOS, modern OS):
+ *   Attaches the ACTUAL IMAGE FILE directly into the share dialog so WhatsApp
+ *   sends the real photo with headline & news link caption!
+ * - On desktop or browsers where file sharing is unsupported:
+ *   Copies the image to clipboard (so the user can just Ctrl+V into WhatsApp Web),
+ *   and opens WhatsApp with the formatted headline and public news link!
  */
-export async function sharePostToWhatsApp(post: Post, customOrigin?: string): Promise<void> {
-  const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-  
-  // On mobile devices, try sharing the actual image file so WhatsApp receives the real thumbnail photo
-  if (isMobile && typeof navigator !== 'undefined' && navigator.canShare && post.featuredImage) {
+export async function sharePostToWhatsApp(post: Post, customOrigin?: string): Promise<{
+  method: 'native-share' | 'whatsapp-link';
+  copiedImage?: boolean;
+}> {
+  const headline = post.titleHindi || post.title;
+  const origin = getPostPublicOrigin(customOrigin);
+  const messageText = formatWhatsAppShareText(post, origin);
+
+  // 1. Check if device supports sharing files directly via Web Share API
+  if (typeof navigator !== 'undefined' && navigator.canShare && post.featuredImage) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1800);
-      const res = await fetch(post.featuredImage, { mode: 'cors', signal: controller.signal });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const blob = await res.blob();
-        const file = new File([blob], 'parth-news-thumbnail.jpg', { type: blob.type || 'image/jpeg' });
-        const headline = post.titleHindi || post.title;
-        const origin = getPostPublicOrigin(customOrigin);
-        const messageText = formatWhatsAppShareText(post, origin);
-
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: headline,
-            text: messageText,
-            files: [file]
-          });
-          return;
-        }
+      const file = await getPostImageFile(post);
+      if (file && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: headline,
+          text: messageText,
+          files: [file]
+        });
+        return { method: 'native-share' };
       }
-    } catch {
-      // User cancelled share dialog or fetch timed out, fall back to direct WhatsApp intent
+    } catch (e: any) {
+      if (e?.name === 'AbortError') {
+        // User cancelled share dialog
+        return { method: 'native-share' };
+      }
+      // Otherwise fall through to direct WhatsApp
     }
   }
 
-  // Synchronous direct WhatsApp opening for desktop & fallback
+  // 2. Desktop WhatsApp Web / fallback:
+  // Try to copy image to clipboard so user can easily paste (Ctrl+V) into WhatsApp Web
+  let copiedImage = false;
+  try {
+    copiedImage = await copyPostImageToClipboard(post);
+  } catch {
+    // Ignore clipboard error
+  }
+
+  // 3. Open WhatsApp Web / App
   openDirectWhatsApp(post, customOrigin);
+  return { method: 'whatsapp-link', copiedImage };
 }
 
 /**

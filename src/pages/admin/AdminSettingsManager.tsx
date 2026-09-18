@@ -11,6 +11,7 @@ export const AdminSettingsManager: React.FC = () => {
     return {
       siteName: s?.siteName || 'Parth News',
       siteNameHindi: s?.siteNameHindi || 'पार्थ न्यूज़',
+      siteUrl: s?.siteUrl || 'https://parthnews.in',
       tagline: s?.tagline || 'सच के साथ, एक कदम आगे',
       channelHead: s?.channelHead || 'राजीव राय',
       contactEmail: s?.contactEmail || 'editor@parthnews.in',
@@ -44,6 +45,7 @@ export const AdminSettingsManager: React.FC = () => {
     setSettings({
       siteName: s?.siteName || 'Parth News',
       siteNameHindi: s?.siteNameHindi || 'पार्थ न्यूज़',
+      siteUrl: s?.siteUrl || 'https://parthnews.in',
       tagline: s?.tagline || 'सच के साथ, एक कदम आगे',
       channelHead: s?.channelHead || 'राजीव राय',
       contactEmail: s?.contactEmail || 'editor@parthnews.in',
@@ -115,6 +117,22 @@ export const AdminSettingsManager: React.FC = () => {
                 onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
                 className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-xs font-hindi text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
               />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="block font-bold text-gray-700 mb-1">
+                आधिकारिक वेबसाइट एवं शेयर डोमेन (Public Website URL for WhatsApp Previews)
+              </label>
+              <input
+                type="text"
+                placeholder="https://parthnews.in"
+                value={settings.siteUrl || ''}
+                onChange={(e) => setSettings({ ...settings, siteUrl: e.target.value })}
+                className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
+              />
+              <p className="text-[11px] text-gray-500 mt-1">
+                WhatsApp, Facebook तथा सोशल मीडिया पर खबर का थंबनेल और लिंक प्रीव्यू लोड करने हेतु लाइव डोमेन (डिफ़ॉल्ट: https://parthnews.in)
+              </p>
             </div>
           </div>
         </div>

@@ -9,10 +9,14 @@ import {
   ChevronRight, 
   Flame, 
   Tag, 
-  Send,
-  Bookmark,
-  Printer,
-  Sparkles
+  Send, 
+  Bookmark, 
+  Printer, 
+  Sparkles,
+  Download,
+  Copy,
+  Check,
+  Image as ImageIcon
 } from 'lucide-react';
 import { db } from '../../services/db';
 import { Post } from '../../types';
@@ -26,7 +30,10 @@ import {
 import { SEOHead } from '../../components/common/SEOHead';
 import { 
   getPostShortUrl, 
-  sharePostToWhatsApp 
+  sharePostToWhatsApp,
+  copyPostImageToClipboard,
+  downloadPostImage,
+  copyPostShortUrl
 } from '../../utils/shareUtils';
 
 interface ArticlePageProps {
@@ -93,6 +100,9 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
     .slice(0, 4);
 
   const [sharingWhatsApp, setSharingWhatsApp] = useState(false);
+  const [shareToast, setShareToast] = useState<string | null>(null);
+  const [copiedImageStatus, setCopiedImageStatus] = useState(false);
+  const [downloadingImage, setDownloadingImage] = useState(false);
   const shortUrl = getPostShortUrl(post);
   const currentUrl = shortUrl;
   const shareTitle = post.titleHindi || post.title;
@@ -101,11 +111,47 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
     e.preventDefault();
     setSharingWhatsApp(true);
     try {
-      await sharePostToWhatsApp(post);
+      const res = await sharePostToWhatsApp(post);
+      if (res?.copiedImage) {
+        setShareToast('📸 फोटो क्लिपबोर्ड पर कॉपी हो गई है! WhatsApp Web में चैट खोलकर Ctrl+V (Paste) दबाएं।');
+        setTimeout(() => setShareToast(null), 8000);
+      }
+    } catch {
+      // ignore
     } finally {
       setTimeout(() => {
         setSharingWhatsApp(false);
       }, 1500);
+    }
+  };
+
+  const handleCopyImage = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const ok = await copyPostImageToClipboard(post);
+    if (ok) {
+      setCopiedImageStatus(true);
+      setShareToast('✅ थंबनेल फोटो कॉपी हो गई! WhatsApp में Ctrl+V (Paste) दबाकर सीधे भेजें।');
+      setTimeout(() => {
+        setCopiedImageStatus(false);
+        setShareToast(null);
+      }, 7000);
+    } else {
+      setShareToast('⚠️ ब्राउज़र ने डायरेक्ट कॉपी ब्लॉक की। कृपया नीचे "फोटो डाउनलोड" पर क्लिक करें।');
+      setTimeout(() => setShareToast(null), 5000);
+    }
+  };
+
+  const handleDownloadImage = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDownloadingImage(true);
+    try {
+      const ok = await downloadPostImage(post);
+      if (ok) {
+        setShareToast('📥 थंबनेल फोटो डाउनलोड हो गई! अब इसे WhatsApp पर आसानी से भेज सकते हैं।');
+        setTimeout(() => setShareToast(null), 5000);
+      }
+    } finally {
+      setTimeout(() => setDownloadingImage(false), 1000);
     }
   };
 
@@ -222,47 +268,85 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
             </div>
 
             {/* Social Share Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100">
-              <span className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
-                <Share2 className="w-4 h-4 text-[#C8102E]" /> शेयर करें (Share):
-              </span>
-              <div className="flex items-center gap-2 flex-wrap">
-                <button
-                  onClick={handleShareWhatsApp}
-                  className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
-                  title="WhatsApp पर फोटो थंबनेल और लिंक शेयर करें"
-                >
-                  <WhatsAppIcon size={18} />
-                  <span>{sharingWhatsApp ? 'WhatsApp खुल रहा है...' : 'WhatsApp शेयर'}</span>
-                </button>
-                <button
-                  onClick={handleShareFacebook}
-                  className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
-                  title="Share on Facebook"
-                >
-                  <FacebookIcon size={18} />
-                  <span>Facebook</span>
-                </button>
-                <button
-                  onClick={handleShareTwitter}
-                  className="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-900 border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
-                  title="Share on X"
-                >
-                  <TwitterXIcon size={18} />
-                  <span>X (Twitter)</span>
-                </button>
-                <button
-                  onClick={() => {
-                    const text = encodeURIComponent(`${shareTitle}\n${currentUrl}`);
-                    window.open(`https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank');
-                  }}
-                  className="inline-flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
-                  title="Share on Telegram"
-                >
-                  <TelegramIcon size={18} />
-                  <span>Telegram</span>
-                </button>
+            <div className="space-y-2.5 pt-3 border-t border-gray-100">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                  <Share2 className="w-4 h-4 text-[#C8102E]" /> शेयर करें (Share):
+                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={handleShareWhatsApp}
+                    className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+                    title="WhatsApp पर फोटो थंबनेल और लिंक शेयर करें"
+                  >
+                    <WhatsAppIcon size={18} />
+                    <span>{sharingWhatsApp ? 'WhatsApp खुल रहा है...' : 'WhatsApp शेयर'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleCopyImage}
+                    className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                    title="थंबनेल फोटो कॉपी करें - फिर WhatsApp में सीधे Ctrl+V दबाकर पेस्ट करें"
+                  >
+                    {copiedImageStatus ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-emerald-700" />}
+                    <span>{copiedImageStatus ? 'फोटो कॉपी हो गई!' : 'फोटो कॉपी (Ctrl+V)'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleDownloadImage}
+                    disabled={downloadingImage}
+                    className="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-800 border border-gray-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-2xs cursor-pointer"
+                    title="थंबनेल फोटो डाउनलोड करें"
+                  >
+                    <Download className="w-3.5 h-3.5 text-gray-600" />
+                    <span>{downloadingImage ? 'डाउनलोडिंग...' : 'फोटो सेव'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleShareFacebook}
+                    className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
+                    title="Share on Facebook"
+                  >
+                    <FacebookIcon size={18} />
+                    <span>Facebook</span>
+                  </button>
+                  <button
+                    onClick={handleShareTwitter}
+                    className="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-900 border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
+                    title="Share on X"
+                  >
+                    <TwitterXIcon size={18} />
+                    <span>X</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      const text = encodeURIComponent(`${shareTitle}\n${currentUrl}`);
+                      window.open(`https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank');
+                    }}
+                    className="inline-flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs"
+                    title="Share on Telegram"
+                  >
+                    <TelegramIcon size={18} />
+                    <span>Telegram</span>
+                  </button>
+                </div>
               </div>
+
+              {/* Share Toast Banner */}
+              {shareToast && (
+                <div className="w-full bg-emerald-50/90 border border-emerald-300 text-emerald-900 text-xs px-3.5 py-2 rounded-lg flex items-center justify-between gap-2 shadow-2xs animate-fadeIn">
+                  <div className="flex items-center gap-2 font-medium">
+                    <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{shareToast}</span>
+                  </div>
+                  <button 
+                    onClick={() => setShareToast(null)} 
+                    className="text-emerald-700 hover:text-emerald-950 font-bold text-xs p-0.5 cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

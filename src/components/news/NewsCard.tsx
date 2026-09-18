@@ -12,6 +12,7 @@ interface NewsCardProps {
 
 export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'standard' }) => {
   const [copied, setCopied] = useState(false);
+  const [copiedNotification, setCopiedNotification] = useState<string | null>(null);
 
   const formatDate = (isoString: string) => {
     if (!isoString) return '';
@@ -29,7 +30,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
 
   const handleWhatsAppShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await sharePostToWhatsApp(post);
+    const res = await sharePostToWhatsApp(post);
+    if (res?.copiedImage) {
+      setCopiedNotification('📸 फोटो कॉपी! WhatsApp में Ctrl+V दबाएं');
+      setTimeout(() => setCopiedNotification(null), 3500);
+    }
   };
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -131,6 +136,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
               </span>
             </div>
             <div className="flex items-center gap-1.5">
+              {copiedNotification && (
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                  {copiedNotification}
+                </span>
+              )}
               <button 
                 onClick={handleWhatsAppShare}
                 className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full transition-colors"
@@ -195,6 +205,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            {copiedNotification && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                {copiedNotification}
+              </span>
+            )}
             <span className="flex items-center gap-0.5 text-gray-400 text-[10px] mr-1">
               <Eye className="w-3 h-3" /> {post.views}
             </span>

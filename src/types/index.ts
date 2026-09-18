@@ -147,6 +147,7 @@ export interface AdvertisementEnquiry {
 export interface SiteSettings {
   siteName: string;
   siteNameHindi?: string;
+  siteUrl?: string;
   tagline: string;
   taglineHindi?: string;
   logoUrl?: string;
