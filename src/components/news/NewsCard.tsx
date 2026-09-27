@@ -79,12 +79,23 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
           <h4 className="text-xs font-bold text-gray-900 group-hover:text-[#C8102E] line-clamp-2 leading-snug transition-colors">
             {post.titleHindi || post.title}
           </h4>
-          <div className="flex items-center gap-2 mt-1 text-[10px] text-gray-400">
-            <span>{formatDate(post.publishedAt || post.createdAt)}</span>
-            <span>•</span>
-            <span className="flex items-center gap-0.5">
-              <Eye className="w-2.5 h-2.5" /> {post.views}
-            </span>
+          <div className="flex items-center justify-between mt-1 text-[10px] text-gray-400">
+            <div className="flex items-center gap-2">
+              <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+              <span>•</span>
+              <span className="flex items-center gap-0.5">
+                <Eye className="w-2.5 h-2.5" /> {post.views}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button 
+                onClick={handleWhatsAppShare}
+                className="p-0.5 hover:scale-110 active:scale-95 transition-transform cursor-pointer rounded-full"
+                title="WhatsApp पर शेयर करें"
+              >
+                <WhatsAppIcon size={22} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -135,22 +146,25 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
                 <Clock className="w-3.5 h-3.5" /> {formatDate(post.publishedAt || post.createdAt)}
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               {copiedNotification && (
                 <span className="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
                   {copiedNotification}
                 </span>
               )}
+              <span className="flex items-center gap-0.5 text-gray-400 text-[11px] mr-0.5">
+                <Eye className="w-3.5 h-3.5" /> {post.views}
+              </span>
               <button 
                 onClick={handleWhatsAppShare}
-                className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full transition-colors"
+                className="p-0.5 hover:scale-110 active:scale-95 transition-transform cursor-pointer rounded-full"
                 title="WhatsApp पर शेयर करें"
               >
-                <WhatsAppIcon size={16} />
+                <WhatsAppIcon size={24} />
               </button>
               <button 
                 onClick={handleShare}
-                className="p-1.5 text-gray-400 hover:text-[#C8102E] hover:bg-red-50 rounded-full transition-colors"
+                className="p-1.5 text-gray-400 hover:text-[#C8102E] hover:bg-red-50 rounded-full transition-colors cursor-pointer"
                 title="लिंक कॉपी / शेयर करें"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
@@ -210,19 +224,19 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
                 {copiedNotification}
               </span>
             )}
-            <span className="flex items-center gap-0.5 text-gray-400 text-[10px] mr-1">
+            <span className="flex items-center gap-0.5 text-gray-400 text-[10px] mr-0.5">
               <Eye className="w-3 h-3" /> {post.views}
             </span>
             <button 
               onClick={handleWhatsAppShare}
-              className="p-1 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded transition-colors"
+              className="p-0.5 hover:scale-110 active:scale-95 transition-transform cursor-pointer rounded-full"
               title="WhatsApp पर शेयर करें"
             >
-              <WhatsAppIcon size={15} />
+              <WhatsAppIcon size={24} />
             </button>
             <button 
               onClick={handleShare}
-              className="p-1 hover:text-[#C8102E] rounded transition-colors"
+              className="p-1 text-gray-400 hover:text-[#C8102E] hover:bg-red-50 rounded transition-colors cursor-pointer"
               title={copied ? "कॉपी हो गया!" : "शेयर करें"}
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}

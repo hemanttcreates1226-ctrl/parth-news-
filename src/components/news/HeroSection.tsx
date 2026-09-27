@@ -1,6 +1,8 @@
 import React from 'react';
-import { Clock, User, ArrowRight, Flame } from 'lucide-react';
+import { Clock, User, ArrowRight, Flame, Eye } from 'lucide-react';
 import { Post } from '../../types';
+import { WhatsAppIcon } from '../common/SocialIcons';
+import { sharePostToWhatsApp } from '../../utils/shareUtils';
 
 interface HeroSectionProps {
   featuredPost?: Post;
@@ -101,11 +103,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <Clock className="w-3.5 h-3.5" />
                   <span>{formatDate(lead.publishedAt || lead.createdAt)}</span>
                 </span>
+                <span className="flex items-center gap-1 text-gray-500">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{lead.views}</span>
+                </span>
               </div>
 
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C8102E] group-hover:translate-x-1 transition-transform">
-                <span>पूरी खबर पढ़ें</span>
-                <ArrowRight className="w-4 h-4" />
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    sharePostToWhatsApp(lead);
+                  }}
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold transition-all border border-emerald-200 cursor-pointer"
+                  title="WhatsApp पर शेयर करें"
+                >
+                  <WhatsAppIcon size={18} />
+                  <span>शेयर करें</span>
+                </button>
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C8102E] group-hover:translate-x-1 transition-transform">
+                  <span>पूरी खबर पढ़ें</span>
+                  <ArrowRight className="w-4 h-4" />
+                </div>
               </div>
             </div>
           </div>
@@ -134,10 +153,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex items-center justify-between gap-1.5 mb-1">
                     <span className="text-[10px] font-bold uppercase text-[#C8102E] tracking-wider">
                       {post.category}
                     </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        sharePostToWhatsApp(post);
+                      }}
+                      className="p-0.5 hover:scale-110 active:scale-95 transition-transform cursor-pointer rounded-full"
+                      title="WhatsApp पर शेयर करें"
+                    >
+                      <WhatsAppIcon size={16} />
+                    </button>
                   </div>
                   <h4 className="text-xs sm:text-sm font-bold text-gray-900 group-hover:text-[#C8102E] line-clamp-2 leading-snug font-hindi transition-colors">
                     {post.titleHindi || post.title}

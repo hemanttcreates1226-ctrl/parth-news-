@@ -25,7 +25,8 @@ import {
   FacebookIcon, 
   TwitterXIcon, 
   WhatsAppIcon, 
-  TelegramIcon 
+  TelegramIcon,
+  HollowCircleIcon
 } from '../../components/common/SocialIcons';
 import { SEOHead } from '../../components/common/SEOHead';
 import { 
@@ -329,6 +330,18 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
                     <TelegramIcon size={18} />
                     <span>Telegram</span>
                   </button>
+
+                  <a
+                    href="https://www.instagram.com/_hemantt12/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-50 via-rose-50 to-pink-50 hover:from-amber-100 hover:to-pink-100 text-gray-800 border border-pink-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs group"
+                    title="Instagram (@_hemantt12)"
+                    aria-label="Instagram (@_hemantt12)"
+                  >
+                    <HollowCircleIcon size={18} />
+                    <span>Instagram</span>
+                  </a>
                 </div>
               </div>
 

@@ -519,10 +519,10 @@ export const INITIAL_SETTINGS: SiteSettings = {
   breakingNewsEnabled: true,
   breakingNewsText: '🔴 पार्थ न्यूज़: सच के साथ, एक कदम आगे • निष्पक्ष, निर्भीक और जनसरोकारी डिजिटल पत्रकारिता',
   socialLinks: {
-    facebook: 'https://facebook.com/ParthNewsOfficial',
+    facebook: 'https://www.facebook.com/profile.php?id=61595037170119',
     twitter: 'https://x.com/ParthNewsLive',
     youtube: 'https://youtube.com/@ParthNewsLive',
-    instagram: 'https://instagram.com/ParthNewsOfficial',
+    instagram: 'https://www.instagram.com/_hemantt12/',
     telegram: 'https://t.me/ParthNewsAlerts'
   },
   editorName: 'राजीव राय (Channel Head)',

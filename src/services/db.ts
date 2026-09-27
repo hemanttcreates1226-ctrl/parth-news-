@@ -127,7 +127,7 @@ class DatabaseService {
     } else {
       try {
         const parsed = JSON.parse(existingSettings);
-        if (!parsed.channelHead || parsed.contactPhone === '+91 98390 00000' || parsed.address?.includes('कस्तूरबा') || parsed.editorName?.includes('हेमंत')) {
+        if (!parsed.channelHead || parsed.contactPhone === '+91 98390 00000' || parsed.address?.includes('कस्तूरबा') || parsed.editorName?.includes('हेमंत') || parsed.socialLinks?.facebook?.includes('ParthNewsOfficial') || parsed.socialLinks?.facebook === 'https://facebook.com') {
           const updated = {
             ...parsed,
             channelHead: 'राजीव राय',
@@ -138,7 +138,12 @@ class DatabaseService {
             whatsappNumber: '+91 9981065457',
             address: 'अखाई मार्केट, अदालत के सामने मुंगावली जिला अशोकनगर मध्यप्रदेश',
             headBureau: 'मुख्यालय ब्यूरो: अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)',
-            prayagrajBureau: 'अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)'
+            prayagrajBureau: 'अखाई मार्केट, अदालत के सामने मुंगावली, जिला अशोकनगर (म.प्र.)',
+            socialLinks: {
+              ...(parsed.socialLinks || {}),
+              facebook: 'https://www.facebook.com/profile.php?id=61595037170119',
+              instagram: 'https://www.instagram.com/_hemantt12/'
+            }
           };
           localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
         }

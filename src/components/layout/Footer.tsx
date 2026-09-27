@@ -57,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </span>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <a 
-                  href={settings.socialLinks?.facebook || 'https://facebook.com'} 
+                  href={settings.socialLinks?.facebook && settings.socialLinks.facebook !== 'https://facebook.com/ParthNewsOfficial' && settings.socialLinks.facebook !== 'https://facebook.com' ? settings.socialLinks.facebook : 'https://www.facebook.com/profile.php?id=61595037170119'} 
                   target="_blank" 
                   rel="noreferrer"
                   className="hover:scale-110 transition-transform duration-200"
@@ -84,7 +84,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   <YouTubeIcon size={34} />
                 </a>
                 <a 
-                  href={settings.socialLinks?.instagram || 'https://instagram.com'} 
+                  href={settings.socialLinks?.instagram && settings.socialLinks.instagram !== 'https://instagram.com/ParthNewsOfficial' && settings.socialLinks.instagram !== 'https://instagram.com' ? settings.socialLinks.instagram : 'https://www.instagram.com/_hemantt12/'} 
                   target="_blank" 
                   rel="noreferrer"
                   className="hover:scale-110 transition-transform duration-200"
