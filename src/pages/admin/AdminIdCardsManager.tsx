@@ -399,7 +399,7 @@ export const AdminIdCardsManager: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="उदा. अमित कुमार वर्मा"
+                  placeholder=""
                   value={repFormData.name || ''}
                   onChange={(e) => setRepFormData({ ...repFormData, name: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs font-hindi text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -427,8 +427,8 @@ export const AdminIdCardsManager: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="Prayagraj / Lucknow"
-                    value={repFormData.district || 'Prayagraj'}
+                    placeholder=""
+                    value={repFormData.district || ''}
                     onChange={(e) => setRepFormData({ ...repFormData, district: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
                   />
@@ -440,7 +440,7 @@ export const AdminIdCardsManager: React.FC = () => {
                   <label className="block font-bold text-gray-700 mb-1">मोबाइल नंबर</label>
                   <input
                     type="tel"
-                    placeholder="+91 98390 00000"
+                    placeholder=""
                     value={repFormData.mobile || ''}
                     onChange={(e) => setRepFormData({ ...repFormData, mobile: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"

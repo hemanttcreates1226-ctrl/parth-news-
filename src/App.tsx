@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
+import { MobileBottomBar } from './components/layout/MobileBottomBar';
 import { SearchModal } from './components/common/SearchModal';
 
 // Public Pages
@@ -272,13 +273,16 @@ function MainApp() {
         />
 
         {/* Main Routed Page Content */}
-        <main className="pb-12">
+        <main className="pb-16 lg:pb-12">
           {renderPublicContent()}
         </main>
       </div>
 
       {/* Global Footer */}
       <Footer onNavigate={navigate} />
+
+      {/* Mobile Sticky Bottom Navigation */}
+      <MobileBottomBar currentPath={pathname} onNavigate={navigate} />
 
       {/* Global Search Modal */}
       <SearchModal

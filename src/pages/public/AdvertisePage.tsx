@@ -95,7 +95,7 @@ export const AdvertisePage: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="उदा. XYZ Enterprises / Education Group"
+                  placeholder=""
                   value={formData.businessName}
                   onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -109,7 +109,7 @@ export const AdvertisePage: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="उदा. अमित वर्मा"
+                  placeholder=""
                   value={formData.contactPerson}
                   onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -123,7 +123,7 @@ export const AdvertisePage: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="contact@business.com"
+                  placeholder=""
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -137,7 +137,7 @@ export const AdvertisePage: React.FC = () => {
                 <input
                   type="tel"
                   required
-                  placeholder="+91 98390 11111"
+                  placeholder=""
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -167,7 +167,7 @@ export const AdvertisePage: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="उदा. ₹10,000 - ₹50,000"
+                  placeholder=""
                   value={formData.budget}
                   onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"

@@ -521,8 +521,8 @@ export const INITIAL_SETTINGS: SiteSettings = {
   socialLinks: {
     facebook: 'https://www.facebook.com/profile.php?id=61595037170119',
     twitter: 'https://x.com/ParthNewsLive',
-    youtube: 'https://youtube.com/@ParthNewsLive',
-    instagram: 'https://www.instagram.com/_hemantt12/',
+    youtube: 'https://www.youtube.com/@ParthNews',
+    instagram: 'https://instagram.com/ParthNewsOfficial',
     telegram: 'https://t.me/ParthNewsAlerts'
   },
   editorName: 'राजीव राय (Channel Head)',

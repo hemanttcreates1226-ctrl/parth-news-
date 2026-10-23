@@ -173,7 +173,7 @@ export const ContactPage: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="उदा. राकेश कुमार"
+                    placeholder=""
                     value={formData.name || ''}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -186,7 +186,7 @@ export const ContactPage: React.FC = () => {
                   </label>
                   <input
                     type="tel"
-                    placeholder="+91 98390 00000"
+                    placeholder=""
                     value={formData.phone || ''}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -201,7 +201,7 @@ export const ContactPage: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="name@example.com"
+                  placeholder=""
                   value={formData.email || ''}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -214,7 +214,7 @@ export const ContactPage: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="उदा. प्रयागराज स्थानीय समाचार संबंधी"
+                  placeholder=""
                   value={formData.subject || ''}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2 text-xs text-gray-900 focus:outline-hidden focus:border-[#C8102E]"

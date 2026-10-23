@@ -8,7 +8,7 @@ import {
   ShieldCheck, 
   AlertCircle, 
   FileText, 
-  Camera, 
+  ImageIcon, 
   Sparkles,
   ArrowRight
 } from 'lucide-react';
@@ -29,8 +29,8 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
     email: '',
     address: '',
     city: '',
-    district: 'Prayagraj',
-    state: 'Uttar Pradesh',
+    district: '',
+    state: '',
     pincode: '',
     education: '',
     experience: '',
@@ -219,7 +219,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
             {/* Section 1: Personal Details */}
             <div className="space-y-4">
               <h3 className="text-base font-bold font-hindi text-gray-900 flex items-center gap-2 border-l-4 border-[#C8102E] pl-2.5">
@@ -234,7 +234,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="उदा. अमित कुमार शर्मा"
+                    placeholder=""
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E] focus:bg-white transition-colors"
@@ -248,7 +248,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="उदा. श्री राम शरण शर्मा"
+                    placeholder=""
                     value={formData.fatherName}
                     onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E] focus:bg-white transition-colors"
@@ -275,7 +275,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="tel"
                     required
-                    placeholder="+91 98390 12345"
+                    placeholder=""
                     value={formData.mobile}
                     onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E] focus:bg-white transition-colors"
@@ -289,7 +289,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="email"
                     required
-                    placeholder="your.email@example.com"
+                    placeholder=""
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E] focus:bg-white transition-colors"
@@ -312,7 +312,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="मकान संख्या, मोहल्ला / ग्राम, डाकघर"
+                    placeholder=""
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -326,7 +326,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="उदा. Prayagraj / Handia"
+                    placeholder=""
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -340,7 +340,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="उदा. Prayagraj / Lucknow / Varanasi"
+                    placeholder=""
                     value={formData.district}
                     onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -354,7 +354,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="211001"
+                    placeholder=""
                     value={formData.pincode}
                     onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -377,7 +377,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="उदा. Graduate / Mass Communication / MA Journalism"
+                    placeholder=""
                     value={formData.education}
                     onChange={(e) => setFormData({ ...formData, education: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -391,7 +391,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <input
                     type="text"
                     required
-                    placeholder="उदा. 3 वर्ष डिजिटल व प्रिंट रिपोर्टिंग"
+                    placeholder=""
                     value={formData.experience}
                     onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -404,7 +404,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   </label>
                   <input
                     type="text"
-                    placeholder="यदि कोई पूर्व अनुभव हो (वैकल्पिक)"
+                    placeholder=""
                     value={formData.previousOrganization}
                     onChange={(e) => setFormData({ ...formData, previousOrganization: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -418,7 +418,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                   <textarea
                     rows={3}
                     required
-                    placeholder="अपने विचार एवं प्राथमिक रिपोर्टिंग विषयों का संक्षेप में विवरण दें..."
+                    placeholder=""
                     value={formData.reason}
                     onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                     className="w-full bg-gray-50 border border-gray-300 rounded-xl p-3.5 text-xs sm:text-sm text-gray-900 focus:outline-hidden focus:border-[#C8102E]"
@@ -442,7 +442,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <Camera className="w-8 h-8 text-gray-400" />
+                    <ImageIcon className="w-8 h-8 text-gray-400" />
                   )}
                 </div>
 
@@ -459,7 +459,7 @@ export const ApplyReporterPage: React.FC<ApplyReporterPageProps> = ({ onNavigate
                       <span>{photoPreview || formData.profilePhoto ? 'Change Photo' : 'Upload Photo from Device'}</span>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
                         onChange={handlePhotoChange}
                         className="hidden"
                       />

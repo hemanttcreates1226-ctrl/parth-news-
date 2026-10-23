@@ -50,7 +50,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const educationPosts = posts.filter(p => p.categorySlug === 'education' || p.category === 'Education');
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-7 sm:space-y-10">
       {/* 1. HERO SECTION */}
       <HeroSection
         featuredPost={featuredPost}
@@ -60,24 +60,24 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       />
 
       {/* 2. REGIONAL FOCUS: PRAYAGRAJ & UTTAR PRADESH */}
-      <section className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200 shadow-xs">
-        <div className="flex items-center justify-between pb-3 border-b-2 border-red-700 mb-5">
+      <section className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-xs">
+        <div className="flex items-center justify-between pb-3 border-b-2 border-red-700 mb-4 sm:mb-5">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 bg-[#C8102E]"></span>
-            <h2 className="text-xl sm:text-2xl font-bold font-hindi text-gray-900">
+            <h2 className="text-base sm:text-2xl font-bold font-hindi text-gray-900 leading-tight">
               प्रयागराज व उत्तर प्रदेश समाचार (Regional Bureau)
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/category/prayagraj')}
-            className="text-xs sm:text-sm font-bold text-[#C8102E] hover:underline flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-[#C8102E] hover:underline flex items-center gap-1 shrink-0"
           >
             <span>सभी देखें</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {prayagrajPosts.concat(upPosts).slice(0, 3).map((post) => (
             <NewsCard
               key={post.id}
@@ -94,7 +94,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white via-rose-50/40 to-red-50/60 border border-red-200/90 hover:border-red-400/80 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white via-rose-50/40 to-red-50/60 border border-red-200/90 hover:border-red-400/80 p-4 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-500"
       >
         {/* Floating animated ambient light orbs */}
         <motion.div 
@@ -126,10 +126,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           className="absolute -bottom-10 left-1/4 w-56 h-56 rounded-full bg-amber-400/10 blur-2xl pointer-events-none"
         />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 sm:gap-6">
+          <div className="space-y-2 sm:space-y-3 max-w-2xl">
             {/* Light Themed Bold Title */}
-            <h3 className="text-2xl sm:text-3xl font-black font-hindi tracking-tight text-gray-900 leading-tight">
+            <h3 className="text-xl sm:text-3xl font-black font-hindi tracking-tight text-gray-900 leading-tight">
               पार्थ न्यूज़ के साथ पत्रकारिता में{' '}
               <span className="text-[#C8102E] relative inline-block">
                 बनाएं अपनी पहचान
@@ -176,26 +176,26 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="bg-white text-gray-900 rounded-2xl p-5 sm:p-6 shadow-xs border border-gray-200"
+        className="bg-white text-gray-900 rounded-2xl p-4 sm:p-6 shadow-xs border border-gray-200"
       >
-        <div className="flex items-center justify-between pb-3 border-b-2 border-red-600 mb-5">
+        <div className="flex items-center justify-between pb-3 border-b-2 border-red-600 mb-4 sm:mb-5">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-600 rounded-xs"></div>
-            <h2 className="text-xl sm:text-2xl font-bold font-hindi text-gray-900 flex items-center gap-2">
-              <Tv className="w-6 h-6 text-red-600" />
+            <h2 className="text-base sm:text-2xl font-bold font-hindi text-gray-900 flex items-center gap-1.5 sm:gap-2 leading-tight">
+              <Tv className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 shrink-0" />
               <span>वीडियो बुलेटिन एवं ग्राउंड रिपोर्ट (Video News)</span>
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/videos')}
-            className="text-xs sm:text-sm font-bold text-[#C8102E] hover:underline flex items-center gap-1 group cursor-pointer"
+            className="text-xs sm:text-sm font-bold text-[#C8102E] hover:underline flex items-center gap-1 group cursor-pointer shrink-0"
           >
-            <span>सभी वीडियो देखें</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <span>सभी देखें</span>
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {videos.slice(0, 3).map((video, idx) => (
             <motion.div
               key={video.id}
@@ -214,24 +214,24 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </motion.section>
 
       {/* 5. EDITORIAL & OPINION ARTICLES */}
-      <section className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200 shadow-xs">
-        <div className="flex items-center justify-between pb-3 border-b-2 border-neutral-900 mb-5">
+      <section className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-xs">
+        <div className="flex items-center justify-between pb-3 border-b-2 border-neutral-900 mb-4 sm:mb-5">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 bg-neutral-900"></span>
-            <h2 className="text-xl sm:text-2xl font-bold font-hindi text-neutral-900">
+            <h2 className="text-base sm:text-2xl font-bold font-hindi text-neutral-900 leading-tight">
               संपादकीय एवं विचार (Editorial & In-Depth Analysis)
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/articles')}
-            className="text-xs sm:text-sm font-bold text-neutral-800 hover:underline flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-neutral-800 hover:underline flex items-center gap-1 shrink-0"
           >
             <span>सभी लेख</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {articles.slice(0, 2).map((art) => (
             <div
               key={art.id}

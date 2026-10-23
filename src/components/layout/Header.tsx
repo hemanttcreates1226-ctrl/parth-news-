@@ -16,6 +16,7 @@ import {
   Globe
 } from 'lucide-react';
 import { ParthNewsLogo } from '../common/ParthNewsLogo';
+import { BreakingTicker } from './BreakingTicker';
 import { db } from '../../services/db';
 
 interface HeaderProps {
@@ -138,42 +139,44 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
         </div>
 
         {/* Mobile Header Controls */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden shrink-0">
           <button
             onClick={onOpenSearch}
-            className="p-2 text-neutral-700 hover:text-neutral-900 hover:bg-gray-100 rounded-lg"
+            className="p-1.5 text-neutral-700 hover:text-neutral-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
             title="Search"
+            aria-label="Search"
           >
             <Search className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleNavClick('/apply-reporter')}
-            className="bg-[#C8102E] text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1"
+            className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-1.5 rounded-lg flex items-center gap-1 shadow-2xs transition-colors shrink-0 cursor-pointer"
+            title="संवाददाता आवेदन"
           >
             <UserPlus className="w-3.5 h-3.5" />
-            <span>Apply</span>
+            <span className="hidden xs:inline">Apply</span>
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-neutral-800 hover:bg-gray-100 rounded-lg"
+            className="p-1.5 text-neutral-800 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-6 h-6 text-[#C8102E]" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Navigation Bar (Desktop Sticky) */}
-      <nav className="bg-white text-gray-800 border-t border-b border-gray-200 hidden lg:block overflow-x-auto scrollbar-none shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <ul className="flex items-center gap-1 whitespace-nowrap py-1.5 font-['Outfit',sans-serif] text-[13.5px] font-bold tracking-wide">
+      {/* Navigation Bar (Desktop & Mobile Swipeable Horizontal Bar) */}
+      <nav className="bg-white text-gray-800 border-t border-b border-gray-200 overflow-x-auto scrollbar-none shadow-2xs w-full">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 flex items-center justify-between">
+          <ul className="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap py-1.5 font-['Outfit',sans-serif] text-[12px] sm:text-[13.5px] font-bold tracking-wide">
             {navItems.map((item) => {
               const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
               return (
-                <li key={item.path}>
+                <li key={item.path} className="shrink-0">
                   <button
                     onClick={() => handleNavClick(item.path)}
-                    className={`px-3 py-1.5 rounded-lg transition-all relative cursor-pointer ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all relative cursor-pointer text-xs sm:text-[13px] ${
                       isActive 
                         ? 'bg-[#C8102E] text-white font-extrabold shadow-xs' 
                         : 'text-gray-700 hover:text-[#C8102E] hover:bg-red-50/80 font-bold'
@@ -186,8 +189,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
             })}
           </ul>
 
-          {/* Quick Live TV / E-Paper Flag */}
-          <div className="flex items-center gap-2 pl-3">
+          {/* Quick Live TV / E-Paper Flag (Desktop) */}
+          <div className="hidden lg:flex items-center gap-2 pl-3 shrink-0">
             <button
               onClick={() => handleNavClick('/videos')}
               className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-['Outfit',sans-serif] text-xs font-black px-3 py-1.5 rounded-lg shadow-xs transition-colors cursor-pointer tracking-wider"
@@ -199,10 +202,13 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenS
         </div>
       </nav>
 
+      {/* Breaking Ticker Header Stripe */}
+      <BreakingTicker onNavigate={handleNavClick} />
+
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[108px] z-50 bg-slate-900/40 backdrop-blur-xs flex flex-col">
-          <div className="bg-white text-neutral-900 w-full max-h-[85vh] overflow-y-auto shadow-2xl border-b border-gray-200 p-4 space-y-4">
+        <div className="lg:hidden fixed inset-x-0 bottom-0 top-[54px] sm:top-[64px] z-50 bg-slate-900/60 backdrop-blur-xs flex flex-col">
+          <div className="bg-white text-neutral-900 w-full max-h-[82vh] overflow-y-auto shadow-2xl border-b border-gray-200 p-4 space-y-4">
             {/* Action Buttons in Mobile Drawer */}
             <div className="grid grid-cols-2 gap-2 pb-3 border-b border-gray-100">
               <button

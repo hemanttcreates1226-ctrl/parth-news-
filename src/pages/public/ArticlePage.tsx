@@ -224,7 +224,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
             </div>
 
             {/* Headline */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 leading-tight font-hindi">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black text-gray-900 leading-snug sm:leading-tight font-hindi">
               {post.titleHindi || post.title}
             </h1>
 
@@ -365,14 +365,14 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({ slug, isEditorial = fa
 
           {/* Featured Image */}
           <div className="space-y-2">
-            <div className="w-full h-80 sm:h-96 rounded-xl overflow-hidden bg-gray-100 shadow-xs">
+            <div className="w-full h-56 xs:h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden bg-gray-100 shadow-xs">
               <img 
                 src={post.featuredImage} 
                 alt={post.title} 
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-xs text-gray-500 italic text-center font-hindi">
+            <p className="text-[11px] sm:text-xs text-gray-500 italic text-center font-hindi">
               फोटो: पार्थ न्यूज़ विशेष ग्राउंड कवरेज
             </p>
           </div>

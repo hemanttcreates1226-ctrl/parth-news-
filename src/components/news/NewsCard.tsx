@@ -183,7 +183,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
       className="group flex flex-col rounded-xl overflow-hidden bg-white border border-gray-200/90 hover:border-red-300 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
     >
       {/* Featured Image */}
-      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+      <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-gray-100">
         <img 
           src={post.featuredImage} 
           alt={post.title} 
@@ -199,17 +199,17 @@ export const NewsCard: React.FC<NewsCardProps> = ({ post, onClick, variant = 'st
       </div>
 
       {/* Content */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-base font-bold text-gray-900 group-hover:text-[#C8102E] leading-snug transition-colors line-clamp-2 font-hindi mb-2">
+          <h3 className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-[#C8102E] leading-snug transition-colors line-clamp-2 font-hindi mb-1.5 sm:mb-2">
             {post.titleHindi || post.title}
           </h3>
-          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-3">
+          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-2.5 sm:mb-3">
             {post.description}
           </p>
         </div>
 
-        <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
+        <div className="pt-2.5 sm:pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 gap-2">
           <div className="flex items-center gap-2 truncate">
             <span className="font-semibold text-gray-700 truncate">
               {post.reporterName.split('(')[0]}

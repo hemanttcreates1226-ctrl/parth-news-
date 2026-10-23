@@ -39,7 +39,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   };
 
   return (
-    <footer className="bg-white text-gray-800 pt-12 pb-8 border-t-4 border-[#C8102E] shadow-sm">
+    <footer className="bg-white text-gray-800 pt-8 sm:pt-12 pb-24 lg:pb-8 border-t-4 border-[#C8102E] shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-gray-200">
@@ -75,7 +75,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   <TwitterXIcon size={34} />
                 </a>
                 <a 
-                  href={settings.socialLinks?.youtube || 'https://youtube.com'} 
+                  href={settings.socialLinks?.youtube && settings.socialLinks.youtube !== 'https://youtube.com/@ParthNewsLive' && settings.socialLinks.youtube !== 'https://youtube.com' ? settings.socialLinks.youtube : 'https://www.youtube.com/@ParthNews'} 
                   target="_blank" 
                   rel="noreferrer"
                   className="hover:scale-110 transition-transform duration-200"
@@ -84,7 +84,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   <YouTubeIcon size={34} />
                 </a>
                 <a 
-                  href={settings.socialLinks?.instagram && settings.socialLinks.instagram !== 'https://instagram.com/ParthNewsOfficial' && settings.socialLinks.instagram !== 'https://instagram.com' ? settings.socialLinks.instagram : 'https://www.instagram.com/_hemantt12/'} 
+                  href={settings.socialLinks?.instagram || 'https://instagram.com'} 
                   target="_blank" 
                   rel="noreferrer"
                   className="hover:scale-110 transition-transform duration-200"

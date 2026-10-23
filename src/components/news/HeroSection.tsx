@@ -55,35 +55,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             className="lg:col-span-8 group bg-white rounded-2xl overflow-hidden border border-gray-200/90 hover:border-red-300 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
           >
             {/* Hero Image */}
-            <div className="relative h-72 sm:h-96 w-full overflow-hidden bg-gray-900">
+            <div className="relative h-56 xs:h-64 sm:h-80 md:h-96 w-full overflow-hidden bg-gray-900">
               <img 
                 src={lead.featuredImage} 
                 alt={lead.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"></div>
               
               {/* Badges */}
-              <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+              <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex flex-wrap gap-1.5 sm:gap-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onViewCategory(lead.categorySlug || lead.category.toLowerCase().replace(/\s+/g, '-'));
                   }}
-                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-xs font-black px-3 py-1 rounded shadow-md uppercase tracking-wider transition-colors"
+                  className="bg-[#C8102E] hover:bg-[#A30C25] text-white text-[11px] sm:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-1 rounded shadow-md uppercase tracking-wider transition-colors"
                 >
                   {lead.category}
                 </button>
                 {lead.breaking && (
-                  <span className="bg-neutral-950/90 text-white text-xs font-bold px-2.5 py-1 rounded border border-red-500 flex items-center gap-1">
+                  <span className="bg-neutral-950/90 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 sm:py-1 rounded border border-red-500 flex items-center gap-1">
                     <Flame className="w-3 h-3 text-red-500 fill-red-500" /> BREAKING
                   </span>
                 )}
               </div>
 
               {/* Title & Overlay Content for mobile/desktop */}
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight font-hindi group-hover:text-red-300 transition-colors drop-shadow-md mb-2">
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 text-white">
+                <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold leading-snug sm:leading-tight font-hindi group-hover:text-red-300 transition-colors drop-shadow-md mb-1 sm:mb-2">
                   {lead.titleHindi || lead.title}
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-200 line-clamp-2 drop-shadow hidden sm:block">
@@ -93,36 +93,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* Bottom Meta & Read Action */}
-            <div className="p-4 sm:p-5 bg-white flex flex-wrap items-center justify-between gap-3 border-t border-gray-100">
-              <div className="flex items-center gap-4 text-xs text-gray-600">
-                <span className="flex items-center gap-1.5 font-bold text-gray-800">
-                  <User className="w-4 h-4 text-[#C8102E]" />
-                  <span>{lead.reporterName}</span>
+            <div className="p-3 sm:p-5 bg-white flex items-center justify-between gap-2 border-t border-gray-100">
+              <div className="flex items-center gap-2 sm:gap-4 text-[11px] sm:text-xs text-gray-600 truncate">
+                <span className="flex items-center gap-1 font-bold text-gray-800 truncate">
+                  <User className="w-3.5 h-3.5 text-[#C8102E] shrink-0" />
+                  <span className="truncate">{lead.reporterName}</span>
                 </span>
-                <span className="flex items-center gap-1 text-gray-500">
+                <span className="hidden sm:flex items-center gap-1 text-gray-500 shrink-0">
                   <Clock className="w-3.5 h-3.5" />
                   <span>{formatDate(lead.publishedAt || lead.createdAt)}</span>
                 </span>
-                <span className="flex items-center gap-1 text-gray-500">
+                <span className="flex items-center gap-1 text-gray-500 shrink-0">
                   <Eye className="w-3.5 h-3.5" />
                   <span>{lead.views}</span>
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     sharePostToWhatsApp(lead);
                   }}
-                  className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold transition-all border border-emerald-200 cursor-pointer"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-full text-[11px] sm:text-xs font-semibold transition-all border border-emerald-200 cursor-pointer active:scale-95"
                   title="WhatsApp पर शेयर करें"
                 >
                   <WhatsAppIcon size={18} />
-                  <span>शेयर करें</span>
+                  <span className="hidden xs:inline">शेयर करें</span>
                 </button>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C8102E] group-hover:translate-x-1 transition-transform">
-                  <span>पूरी खबर पढ़ें</span>
+                <div className="inline-flex items-center gap-1 text-xs font-bold text-[#C8102E] group-hover:translate-x-1 transition-transform">
+                  <span className="hidden sm:inline">पूरी खबर पढ़ें</span>
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </div>

@@ -21,36 +21,36 @@ export const ParthNewsLogo: React.FC<LogoProps> = ({
   const isIdCard = variant === 'idcard';
   const isFooter = variant === 'footer';
 
-  // Dimension scaling for the emblem - significantly enlarged
+  // Dimension scaling for the emblem - mobile friendly and desktop enlarged
   const imageSizeClasses = {
-    sm: 'h-12 sm:h-14 w-auto',
-    md: 'h-14 sm:h-16 md:h-20 w-auto',
-    lg: 'h-18 sm:h-22 md:h-26 lg:h-28 w-auto',
-    xl: 'h-20 sm:h-24 md:h-28 lg:h-32 w-auto',
-    '2xl': 'h-24 sm:h-28 md:h-32 lg:h-36 w-auto',
-    hero: 'h-28 sm:h-36 md:h-44 w-auto'
-  }[size] || 'h-20 sm:h-24 md:h-28 w-auto';
+    sm: 'h-9 sm:h-12 md:h-14 w-auto',
+    md: 'h-10 sm:h-14 md:h-18 w-auto',
+    lg: 'h-11 sm:h-16 md:h-22 lg:h-26 w-auto',
+    xl: 'h-14 sm:h-20 md:h-26 lg:h-30 w-auto',
+    '2xl': 'h-16 sm:h-24 md:h-30 lg:h-36 w-auto',
+    hero: 'h-20 sm:h-32 md:h-40 w-auto'
+  }[size] || 'h-11 sm:h-16 md:h-22 w-auto';
 
   const titleSizeClasses = {
-    sm: 'text-lg sm:text-xl',
-    md: 'text-2xl sm:text-3xl',
-    lg: 'text-2xl sm:text-3xl md:text-4xl lg:text-[42px]',
-    xl: 'text-3xl sm:text-4xl md:text-5xl',
-    '2xl': 'text-4xl sm:text-5xl lg:text-6xl',
-    hero: 'text-5xl sm:text-6xl lg:text-7xl'
-  }[size] || 'text-2xl sm:text-3xl md:text-4xl';
+    sm: 'text-base sm:text-lg',
+    md: 'text-lg sm:text-2xl md:text-3xl',
+    lg: 'text-xl sm:text-2xl md:text-3xl lg:text-[40px]',
+    xl: 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl',
+    '2xl': 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl',
+    hero: 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl'
+  }[size] || 'text-xl sm:text-2xl md:text-3xl';
 
   const taglineSizeClasses = {
-    sm: 'text-[10px]',
-    md: 'text-[11px] sm:text-xs',
-    lg: 'text-xs sm:text-[13px] md:text-sm',
-    xl: 'text-sm sm:text-base',
-    '2xl': 'text-base',
-    hero: 'text-lg'
-  }[size] || 'text-xs sm:text-sm';
+    sm: 'text-[9px] sm:text-[10px]',
+    md: 'text-[10px] sm:text-[11px] md:text-xs',
+    lg: 'text-[10px] sm:text-xs md:text-sm',
+    xl: 'text-xs sm:text-sm md:text-base',
+    '2xl': 'text-sm sm:text-base',
+    hero: 'text-base sm:text-lg'
+  }[size] || 'text-[10px] sm:text-xs';
 
   return (
-    <div className={`inline-flex items-center gap-3 sm:gap-4.5 select-none ${className}`}>
+    <div className={`inline-flex items-center gap-2 sm:gap-3.5 select-none ${className}`}>
       {/* Exact 3D Badge Logo Image (Enlarged) */}
       <div className="relative shrink-0 flex items-center justify-center">
         {!imgError ? (

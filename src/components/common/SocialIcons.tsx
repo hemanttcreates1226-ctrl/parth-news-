@@ -5,11 +5,12 @@ interface SocialIconProps {
   size?: number;
 }
 
-export const FacebookIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8', size = 32 }) => (
+export const FacebookIcon: React.FC<SocialIconProps> = ({ className = '', size = 32 }) => (
   <svg 
     viewBox="0 0 32 32" 
     width={size} 
     height={size} 
+    style={{ width: size, height: size }}
     className={`shrink-0 drop-shadow-xs transition-transform hover:scale-110 ${className}`}
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
@@ -22,11 +23,12 @@ export const FacebookIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8',
   </svg>
 );
 
-export const TwitterXIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8', size = 32 }) => (
+export const TwitterXIcon: React.FC<SocialIconProps> = ({ className = '', size = 32 }) => (
   <svg 
     viewBox="0 0 32 32" 
     width={size} 
     height={size} 
+    style={{ width: size, height: size }}
     className={`shrink-0 drop-shadow-xs transition-transform hover:scale-110 ${className}`}
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
@@ -39,11 +41,12 @@ export const TwitterXIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8',
   </svg>
 );
 
-export const YouTubeIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8', size = 32 }) => (
+export const YouTubeIcon: React.FC<SocialIconProps> = ({ className = '', size = 32 }) => (
   <svg 
     viewBox="0 0 32 32" 
     width={size} 
     height={size} 
+    style={{ width: size, height: size }}
     className={`shrink-0 drop-shadow-xs transition-transform hover:scale-110 ${className}`}
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
@@ -56,11 +59,12 @@ export const YouTubeIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8', 
   </svg>
 );
 
-export const InstagramIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8', size = 32 }) => (
+export const InstagramIcon: React.FC<SocialIconProps> = ({ className = '', size = 32 }) => (
   <svg 
     viewBox="0 0 32 32" 
     width={size} 
     height={size} 
+    style={{ width: size, height: size }}
     className={`shrink-0 drop-shadow-xs transition-transform hover:scale-110 ${className}`}
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
@@ -81,11 +85,14 @@ export const InstagramIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8'
   </svg>
 );
 
-export const TelegramIcon: React.FC<SocialIconProps> = ({ className = 'w-8 h-8', size = 32 }) => (
+export const HollowCircleIcon: React.FC<SocialIconProps> = InstagramIcon;
+
+export const TelegramIcon: React.FC<SocialIconProps> = ({ className = '', size = 32 }) => (
   <svg 
     viewBox="0 0 32 32" 
     width={size} 
     height={size} 
+    style={{ width: size, height: size }}
     className={`shrink-0 drop-shadow-xs transition-transform hover:scale-110 ${className}`}
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Reporter, IdCardRecord } from '../../types';
-import { ParthNewsLogo } from '../common/ParthNewsLogo';
+import logoPng from '../../assets/images/parthnews.png';
 
 interface ReporterIdCardProps {
   reporter: Reporter | IdCardRecord;
@@ -34,7 +34,7 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
       >
         {/* Holographic / Guilloche Security Pattern Header */}
         <div 
-          className="p-4 text-center relative overflow-hidden"
+          className="px-4 py-3 text-center relative overflow-hidden shrink-0"
           style={{
             background: 'linear-gradient(90deg, #990000 0%, #C8102E 50%, #990000 100%)',
             color: '#FFFFFF'
@@ -43,15 +43,21 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
           {/* Subtle security pattern */}
           <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:8px_8px]"></div>
           
-          <div className="flex justify-center mb-1 relative z-10">
-            <ParthNewsLogo variant="idcard" size="sm" light />
-          </div>
+          <div className="relative z-10 flex flex-col items-center justify-center">
+            <div className="flex items-center justify-center gap-2">
+              <span className="font-['Yatra_One','Rozha_One',serif] text-xl font-black text-white tracking-wide">
+                पार्थ न्यूज़
+              </span>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-red-100 bg-black/25 px-2 py-0.5 rounded border border-red-300/30">
+                PARTH NEWS
+              </span>
+            </div>
 
-          <div 
-            className="text-[10px] font-bold uppercase tracking-widest mt-0.5 relative z-10"
-            style={{ color: '#FECACA' }}
-          >
-            OFFICIAL PRESS IDENTITY CARD
+            <div 
+              className="text-[9.5px] font-bold uppercase tracking-widest mt-1 text-red-100"
+            >
+              OFFICIAL PRESS IDENTITY CARD • प्रेस पहचान पत्र
+            </div>
           </div>
         </div>
 
@@ -70,10 +76,11 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
             </div>
           </div>
 
-          {/* Photo with Official Red Frame */}
-          <div className="relative mt-1">
+          {/* Photo and Parth News 3D Logo Image placed TOGETHER side-by-side */}
+          <div className="flex items-center justify-center gap-3.5 mt-1 relative z-10">
+            {/* Reporter Photo with Official Red Frame */}
             <div 
-              className="w-28 h-32 rounded-lg overflow-hidden p-0.5"
+              className="w-28 h-32 rounded-xl overflow-hidden p-0.5 flex flex-col justify-between"
               style={{
                 border: '2px solid #C8102E',
                 backgroundColor: '#F3F4F6',
@@ -83,9 +90,37 @@ export const ReporterIdCard: React.FC<ReporterIdCardProps> = ({
               <img 
                 src={reporter.photo} 
                 alt={reporterName}
-                className="w-full h-full object-cover rounded"
+                className="w-full h-full object-cover rounded-lg"
                 crossOrigin="anonymous"
               />
+            </div>
+
+            {/* Official Parth News Logo Emblem Image - Moved Together with the Photo */}
+            <div 
+              className="w-28 h-32 rounded-xl overflow-hidden p-2 flex flex-col items-center justify-between text-center relative"
+              style={{
+                border: '2px solid #990000',
+                background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF5F5 100%)',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.08)'
+              }}
+            >
+              <span className="text-[8px] font-black uppercase tracking-wider text-[#C8102E] bg-red-100/70 px-2 py-0.5 rounded border border-red-200">
+                OFFICIAL SEAL
+              </span>
+              <img 
+                src={logoPng || '/parthnews.png'} 
+                alt="पार्थ न्यूज़"
+                className="w-16 h-16 object-contain drop-shadow-sm transition-transform hover:scale-105"
+                crossOrigin="anonymous"
+              />
+              <div className="leading-tight">
+                <span className="text-[9.5px] font-black tracking-wider text-[#990000] block uppercase font-hindi">
+                  पार्थ न्यूज़
+                </span>
+                <span className="text-[7.5px] font-bold text-gray-500 uppercase tracking-tight block">
+                  DIGITAL MEDIA
+                </span>
+              </div>
             </div>
           </div>
 

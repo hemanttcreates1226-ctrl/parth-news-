@@ -30,17 +30,17 @@ export const BreakingTicker: React.FC<BreakingTickerProps> = ({ onNavigate, onSe
   if (!settings.breakingNewsEnabled) return null;
 
   return (
-    <div className="bg-[#111111] text-white border-b border-red-900/40 relative z-30 shadow-inner">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-10 overflow-hidden">
+    <div className="bg-[#111111] text-white border-b border-red-900/40 relative z-30 shadow-inner w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex items-center h-9 sm:h-10 overflow-hidden">
         {/* Breaking Badge */}
-        <div className="shrink-0 flex items-center gap-1.5 bg-[#C8102E] text-white font-black text-xs uppercase px-3 py-1.5 rounded-sm tracking-wider shadow-sm mr-3">
+        <div className="shrink-0 flex items-center gap-1 sm:gap-1.5 bg-[#C8102E] text-white font-black text-[10px] sm:text-xs uppercase px-2 sm:px-3 py-1 sm:py-1.5 rounded-sm tracking-wider shadow-sm mr-2 sm:mr-3">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
           </span>
-          <Flame className="w-3.5 h-3.5 fill-white text-white" />
-          <span>BREAKING NEWS</span>
-          <span className="font-hindi text-[11px] hidden md:inline ml-1 font-semibold">ताज़ा खबर</span>
+          <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-white text-white" />
+          <span className="font-['Outfit',sans-serif] font-black">BREAKING</span>
+          <span className="font-hindi text-[10px] sm:text-[11px] hidden sm:inline ml-0.5 font-semibold">ताज़ा खबर</span>
         </div>
 
         {/* Marquee or Dynamic Headlines */}
